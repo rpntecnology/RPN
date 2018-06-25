@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"RPN/dao"
 	"gopkg.in/mgo.v2/bson"
+	"github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
 	"time"
 	"RPN/config"
@@ -17,9 +18,15 @@ var userDao = dao.UserDAO{}
 
 func main() {
 	r := mux.NewRouter()
+	var jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
+		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+			return config.MySigningKey, nil
+		},
+		SigningMethod: jwt.SigningMethodHS256,
+	})
 	r.Handle("/register", http.HandlerFunc(signupHandler)).Methods("POST")
 	r.Handle("/login", http.HandlerFunc(loginHandler)).Methods("POST")
-	//r.Handle("/findUser", jwtMiddleware.Handler( http.HandlerFunc(FindUserHandler))).Methods("POST")
+	r.Handle("/userProfile", jwtMiddleware.Handler(http.HandlerFunc(userProfileHandler))).Methods("GET")
 	r.Handle("/findAll", http.HandlerFunc(getAllUsersHandler)).Methods("GET")
 	log.Println("Listening on port 8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
@@ -75,8 +82,21 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 }
 
-func findUserHandler(w http.ResponseWriter, r *http.Request) {
+func userProfileHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received new profile request")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 
+	user := r.Context().Value("user")
+	claims := user.(*jwt.Token).Claims
+	username := claims.(jwt.MapClaims)["username"]
+
+	err, profile := userDao.FindUser(username.(string))
+	if err != nil {
+		respondWithError(w, http.StatusNoContent, err.Error())
+	}
+	respondWithJson(w, http.StatusOK, profile)
 }
 
 func getAllUsersHandler(w http.ResponseWriter, r *http.Request) {
