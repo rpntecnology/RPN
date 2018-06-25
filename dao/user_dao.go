@@ -40,6 +40,18 @@ func (m *UserDAO) AddUser(user model.User) error {
 	return err
 }
 
+func (m *UserDAO) CheckUser(username, password string) bool {
+	m.Connect()
+	var user model.User
+	err := db.C(COLLECTION).Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		log.Println("Error in finding username: " + username)
+		return false
+	}
+
+	return username == user.Username && password == user.Password
+}
+
 func (m *UserDAO) FindAll() ([]model.User, error) {
 	m.Connect()
 	var users []model.User

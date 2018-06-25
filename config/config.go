@@ -7,3 +7,4 @@ const (
 	DB_NAME =  "RPN_proj"
 )
 
+var MySigningKey = []byte("mySecret")
