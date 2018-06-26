@@ -12,12 +12,14 @@ import (
 type UserDAO struct {
 	Server   string
 	Database string
+	db       *mgo.Database
 }
-var db *mgo.Database
 
 const (
-	COLLECTION = "user"
+	USER_COLLECTION = "user"
 )
+
+
 
 // connect to database
 func (m *UserDAO) Connect() {
@@ -29,13 +31,13 @@ func (m *UserDAO) Connect() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db = session.DB(m.Database)
+	m.db = session.DB(m.Database)
 }
 
 //Add User
 func (m *UserDAO) AddUser(user model.User) error {
 	m.Connect()
-	err := db.C(COLLECTION).Insert(&user)
+	err := m.db.C(USER_COLLECTION).Insert(&user)
 	fmt.Printf("%+v\n", user)
 	return err
 }
@@ -43,7 +45,7 @@ func (m *UserDAO) AddUser(user model.User) error {
 func (m *UserDAO) CheckUser(username, password string) bool {
 	m.Connect()
 	var user model.User
-	err := db.C(COLLECTION).Find(bson.M{"username": username}).One(&user)
+	err := m.db.C(USER_COLLECTION).Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		log.Println("Error in finding username: " + username)
 		return false
@@ -55,7 +57,7 @@ func (m *UserDAO) CheckUser(username, password string) bool {
 func (m *UserDAO) FindUser(username string) (error, model.User) {
 	m.Connect()
 	var user model.User
-	err := db.C(COLLECTION).Find(bson.M{"username": username}).One(&user)
+	err := m.db.C(USER_COLLECTION).Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		log.Println("Error in finding username: " + username)
 		return err, user
@@ -67,6 +69,6 @@ func (m *UserDAO) FindUser(username string) (error, model.User) {
 func (m *UserDAO) FindAll() ([]model.User, error) {
 	m.Connect()
 	var users []model.User
-	err := db.C(COLLECTION).Find(bson.M{}).All(&users)
+	err := m.db.C(USER_COLLECTION).Find(bson.M{}).All(&users)
 	return users, err
 }

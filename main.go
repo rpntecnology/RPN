@@ -48,7 +48,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 	if err := userDao.AddUser(user); err != nil {
 		log.Println("DB insert error")
 		log.Println(err.Error())
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		respondWithError(w, http.StatusConflict, err.Error())
 		return
 	}
 	w.Header().Set("Content-Type", "text/plain")
@@ -76,6 +76,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Login successfully")
 	} else {
 		log.Println("Invalid username or password.")
+		log.Println("username: " + user.Username + "password: " + user.Password)
 		respondWithError(w, http.StatusForbidden, "Invalid username or password")
 	}
 	w.Header().Set("Content-Type", "text/plain")
