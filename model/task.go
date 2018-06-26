@@ -7,6 +7,7 @@ type Task struct {
 	TaskName        string        `bson:"taskname" json:"taskname"`
 	Username        string        `bson:"username" json:"username"`
 	Address         string        `bson:"address" json:"address"`
+	Category        []string      `bson:"category" json:"category"`
 	Image           []ImageSlot   `bson:"image_slot" json:"image_slot"`
 	IsDone          string        `bson:"isDone" json:"isDone"`
 }
