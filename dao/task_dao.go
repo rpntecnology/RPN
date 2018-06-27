@@ -43,11 +43,11 @@ func (m *TaskDAO) AddTask(task model.Task) error {
 	return err
 }
 
-func (m *TaskDAO) AddImage(taskId bson.ObjectId, imageSlot model.ImageSlot) error {
+func (m *TaskDAO) AddImage(imageSlot model.ImageSlot) error {
 	m.Connect()
 	defer m.session.Close()
 	err := m.db.C(TASK_COLLECTION).Update(
-		bson.M{"task_id": taskId},
+		bson.M{"task_id": imageSlot.TaskID},
 		bson.M{"$push": bson.M{"image": imageSlot}})
 	return err
 }
@@ -59,15 +59,35 @@ func (m *TaskDAO) FindByUsername() ([]model.Task, error) {
 	return tasks, err
 }
 
-func (m *TaskDAO) FindImageByCategory(taskID bson.ObjectId, Category string) (error, []bson.ObjectId) {
+func (m *TaskDAO) FindImageByCategory(taskID bson.ObjectId, Category string) (error, []model.ImageSlot) {
 	m.Connect()
-	var imageIDs []bson.ObjectId
+	var Images []model.ImageSlot
 	//var task model.Task
-	err := m.db.C(TASK_COLLECTION).Find(bson.M{"TaskID": taskID}).Select(bson.M{"Image": bson.M{"$elemMatch": bson.M{"Category": Category}}}).One(&imageIDs)
+	err := m.db.C(TASK_COLLECTION).Find(bson.M{"task_id": taskID}).Select(bson.M{"image": bson.M{"$elemMatch": bson.M{"category": Category}}}).All(&Images)
 	if err != nil {
 		log.Println("Error in finding task with this taskID: " + taskID)
-		return err, nil
+		return err, Images
 	}
 
-	return err, imageIDs
+	return err, Images
+}
+
+func (m *TaskDAO) FindImageByCategoryII(taskID bson.ObjectId, category string) (error, []model.ImageSlot) {
+	m.Connect()
+	var Images []model.ImageSlot
+	pipeline := []bson.M {
+		bson.M{"$match": bson.M{"task_id": taskID}},
+		bson.M{"$unwind": "$image"},
+		bson.M{"$match": bson.M{"image.category": category}},
+	}
+	pipe := m.db.C(TASK_COLLECTION).Pipe(pipeline)
+	resp := []bson.M{}
+	err1 := pipe.All(&resp)
+	if err1 != nil {
+		log.Println(err1.Error())
+	}
+	log.Println(resp)
+
+	err := pipe.All(&Images)
+	return err, Images
 }
