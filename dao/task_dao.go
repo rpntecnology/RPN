@@ -52,28 +52,26 @@ func (m *TaskDAO) AddImage(imageSlot model.ImageSlot) error {
 	return err
 }
 
-func (m *TaskDAO) FindByUsername() ([]model.Task, error) {
+func (m *TaskDAO) FindByUsername(username string) (error, []model.Task) {
 	m.Connect()
+	defer m.session.Close()
 	var tasks []model.Task
-	err := m.db.C(TASK_COLLECTION).Find(bson.M{}).All(&tasks)
-	return tasks, err
+	err := m.db.C(TASK_COLLECTION).Find(bson.M{"username": username}).All(&tasks)
+	return err, tasks
 }
 
-func (m *TaskDAO) FindImageByCategory(taskID bson.ObjectId, Category string) (error, []model.ImageSlot) {
+func (m *TaskDAO) FindById(taskId bson.ObjectId) (error, model.Task) {
 	m.Connect()
-	var Images []model.ImageSlot
-	//var task model.Task
-	err := m.db.C(TASK_COLLECTION).Find(bson.M{"task_id": taskID}).Select(bson.M{"image": bson.M{"$elemMatch": bson.M{"category": Category}}}).All(&Images)
-	if err != nil {
-		log.Println("Error in finding task with this taskID: " + taskID)
-		return err, Images
-	}
-
-	return err, Images
+	defer m.session.Close()
+	var task model.Task
+	err := m.db.C(TASK_COLLECTION).Find(bson.M{"task_id": taskId}).One(&task)
+	return err, task
 }
 
-func (m *TaskDAO) FindImageByCategoryII(taskID bson.ObjectId, category string) (error, []model.ImageSlot) {
+
+func (m *TaskDAO) FindImageByCategory(taskID bson.ObjectId, category string) (error, []model.ImageSlot) {
 	m.Connect()
+	defer m.session.Close()
 	var Images []model.ImageSlot
 	pipeline := []bson.M {
 		bson.M{"$match": bson.M{"task_id": taskID}},
@@ -81,13 +79,22 @@ func (m *TaskDAO) FindImageByCategoryII(taskID bson.ObjectId, category string) (
 		bson.M{"$match": bson.M{"image.category": category}},
 	}
 	pipe := m.db.C(TASK_COLLECTION).Pipe(pipeline)
+	log.Println(pipeline)
 	resp := []bson.M{}
+	var task1 model.Task
+	//resp := []model.Task{}
 	err1 := pipe.All(&resp)
+	err2 := pipe.One(&task1)
 	if err1 != nil {
 		log.Println(err1.Error())
 	}
-	log.Println(resp)
-
+	if err2 != nil {
+		log.Println(err1.Error())
+	}
+	log.Println("resp: ")
+	log.Println(resp[1])
+	log.Println(task1)
 	err := pipe.All(&Images)
 	return err, Images
 }
+

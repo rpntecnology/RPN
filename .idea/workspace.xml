@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5851b348-f468-42c1-9c98-c4ee981a549b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dao/task_dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/task_dao.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/user_dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/user_dao.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/imageSlot.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/imageSlot.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/task_api.go" beforeDir="false" afterPath="$PROJECT_DIR$/task_api.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_api.go" beforeDir="false" afterPath="$PROJECT_DIR$/user_api.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -29,10 +29,22 @@
       <file leaf-file-name="task_dao.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dao/task_dao.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="516">
-              <caret line="93" lean-forward="true" selection-start-line="93" selection-end-line="93" />
+            <state relative-caret-position="338">
+              <caret line="62" selection-start-line="62" selection-end-line="68" selection-end-column="1" />
               <folding>
                 <element signature="e#13#83#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="user_dao.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dao/user_dao.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="667">
+              <caret line="81" column="31" selection-start-line="81" selection-start-column="18" selection-end-line="81" selection-end-column="31" />
+              <folding>
+                <element signature="e#13#56#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -47,7 +59,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="imageSlot.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="imageSlot.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/imageSlot.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="90">
@@ -59,23 +71,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="user_dao.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dao/user_dao.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="515">
-              <caret line="90" column="18" selection-start-line="90" selection-start-column="18" selection-end-line="90" selection-end-column="18" />
-              <folding>
-                <element signature="e#13#56#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="main.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="24" column="75" selection-start-line="24" selection-start-column="75" selection-end-line="24" selection-end-column="75" />
+            <state relative-caret-position="375">
+              <caret line="25" column="24" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
               <folding>
                 <element signature="e#14#69#0" expanded="true" />
               </folding>
@@ -86,8 +86,8 @@
       <file leaf-file-name="task_api.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/task_api.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="78" column="14" lean-forward="true" selection-start-line="78" selection-start-column="14" selection-end-line="78" selection-end-column="14" />
+            <state relative-caret-position="1035">
+              <caret line="69" column="35" selection-start-line="69" selection-start-column="35" selection-end-line="69" selection-end-column="35" />
               <folding>
                 <element signature="e#14#47#0" expanded="true" />
               </folding>
@@ -98,8 +98,8 @@
       <file leaf-file-name="user_api.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/user_api.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
-              <caret line="77" column="45" lean-forward="true" selection-start-line="77" selection-start-column="45" selection-end-line="77" selection-end-column="54" />
+            <state relative-caret-position="138">
+              <caret line="16" selection-start-line="16" selection-end-line="19" selection-end-column="1" />
               <folding>
                 <element signature="e#14#150#0" expanded="true" />
               </folding>
@@ -125,6 +125,12 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>\	if userDb\.Password \=\= user\.Password \{\n\	\	token \:\= jwt\.New\(jwt\.SigningMethodHS256\)\n\	\	claims \:\= token\.Claims\.\(jwt\.MapClaims\)\n\	\	claims\[\&quot;username\&quot;\] \= userDb\.Username\n\	\	claims\[\&quot;authority\&quot;\] \= userDb\.Authority\n\	\	claims\[\&quot;exp\&quot;\] \= time\.Now\(\)\.Add\(time\.Hour \* 24\)\.Unix\(\)\n\	\	tokenString\, _ \:\= token\.SignedString\(config\.MySigningKey\)\n\	\	w\.Write\(\[\]byte\(tokenString\)\)\n\	\	log\.Println\(\&quot;tokenString\: \&quot; \+ tokenString\)\n\	\	log\.Println\(\&quot;Login successfully\&quot;\)\n\	\	\} else \{\n\	\	\	log\.Println\(\&quot;Invalid username or password\.\&quot;\)\n\	\	\	log\.Println\(\&quot;username\: \&quot; \+ user\.Username \+ \&quot;password\: \&quot; \+ user\.Password\)\n\	\	\	respondWithError\(w\, http\.StatusForbidden\, \&quot;Invalid username or password\&quot;\)\n\	\	\}\n\	\}</find>
+      <find>FindAuthority</find>
+    </findStrings>
+  </component>
   <component name="GOROOT" path="/usr/local/go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -140,14 +146,14 @@
         <option value="$PROJECT_DIR$/model/image.go" />
         <option value="$PROJECT_DIR$/dao/connect.go" />
         <option value="$PROJECT_DIR$/config/config.go" />
-        <option value="$PROJECT_DIR$/user_api.go" />
         <option value="$PROJECT_DIR$/response.go" />
-        <option value="$PROJECT_DIR$/dao/user_dao.go" />
         <option value="$PROJECT_DIR$/model/imageSlot.go" />
+        <option value="$PROJECT_DIR$/model/task.go" />
+        <option value="$PROJECT_DIR$/dao/user_dao.go" />
         <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/task_api.go" />
         <option value="$PROJECT_DIR$/dao/task_dao.go" />
-        <option value="$PROJECT_DIR$/model/task.go" />
+        <option value="$PROJECT_DIR$/user_api.go" />
       </list>
     </option>
   </component>
@@ -229,22 +235,22 @@
     <frame x="0" y="0" width="1440" height="900" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50069445" side_tool="true" weight="0.2134434" />
       <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.49930555" visible="true" weight="0.2134434" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" sideWeight="0.49930555" visible="true" weight="0.2134434" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
     </layout>
@@ -329,13 +335,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/user.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="16" lean-forward="true" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/config.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -345,20 +344,47 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/user_api.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="77" column="45" lean-forward="true" selection-start-line="77" selection-start-column="45" selection-end-line="77" selection-end-column="54" />
+        <state relative-caret-position="138">
+          <caret line="16" selection-start-line="16" selection-end-line="19" selection-end-column="1" />
           <folding>
             <element signature="e#14#150#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/task_api.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1035">
+          <caret line="69" column="35" selection-start-line="69" selection-start-column="35" selection-end-line="69" selection-end-column="35" />
+          <folding>
+            <element signature="e#14#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dao/task_dao.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="516">
-          <caret line="93" lean-forward="true" selection-start-line="93" selection-end-line="93" />
+        <state relative-caret-position="338">
+          <caret line="62" selection-start-line="62" selection-end-line="68" selection-end-column="1" />
           <folding>
             <element signature="e#13#83#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/user.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="16" lean-forward="true" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dao/user_dao.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="667">
+          <caret line="81" column="31" selection-start-line="81" selection-start-column="18" selection-end-line="81" selection-end-column="31" />
+          <folding>
+            <element signature="e#13#56#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -370,42 +396,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dao/user_dao.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="515">
-          <caret line="90" column="18" selection-start-line="90" selection-start-column="18" selection-end-line="90" selection-end-column="18" />
-          <folding>
-            <element signature="e#13#56#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="75" selection-start-line="24" selection-start-column="75" selection-end-line="24" selection-end-column="75" />
-          <folding>
-            <element signature="e#14#69#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/task_api.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="78" column="14" lean-forward="true" selection-start-line="78" selection-start-column="14" selection-end-line="78" selection-end-column="14" />
-          <folding>
-            <element signature="e#14#47#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/imageSlot.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="14" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="14" />
           <folding>
             <element signature="e#15#76#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="24" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
+          <folding>
+            <element signature="e#14#69#0" expanded="true" />
           </folding>
         </state>
       </provider>

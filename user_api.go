@@ -10,9 +10,14 @@ import (
 	"time"
 	"RPN/config"
 	"RPN/dao"
+	"strconv"
 )
 
 var userDao = dao.UserDAO{}
+const (
+	AUTH_TO_DELETE = 2
+	AUTH_TO_MANAGE_TASK = 1
+)
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received new sign up request")
@@ -45,10 +50,19 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if userDao.CheckUser(user.Username, user.Password) {
+	err, userDb := userDao.FindUser(user.Username)
+	if err != nil {
+		log.Println(err.Error())
+		log.Println("Error in finding user")
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if userDb.Password == user.Password {
 		token := jwt.New(jwt.SigningMethodHS256)
 		claims := token.Claims.(jwt.MapClaims)
-		claims["username"] = user.Username
+		claims["username"] = userDb.Username
+		claims["authority"] = userDb.Authority
 		claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 		tokenString, _ := token.SignedString(config.MySigningKey)
 		w.Write([]byte(tokenString))
@@ -59,6 +73,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("username: " + user.Username + "password: " + user.Password)
 		respondWithError(w, http.StatusForbidden, "Invalid username or password")
 	}
+
 	w.Header().Set("Content-Type", "text/plain")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 }
@@ -70,9 +85,7 @@ func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 
 	user := r.Context().Value("user")
-	//log.Println(user)
 	claims := user.(*jwt.Token).Claims
-	//log.Println(claims)
 	username := claims.(jwt.MapClaims)["username"]
 
 	err, profile := userDao.FindUser(username.(string))
@@ -89,4 +102,28 @@ func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, users)
+}
+
+func RemoveUserHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received delete user request")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	user := r.Context().Value("user")
+	claims := user.(*jwt.Token).Claims
+	authority := claims.(jwt.MapClaims)["authority"]
+	auth, _ := strconv.Atoi(authority.(string))
+	log.Println(auth)
+	if auth < AUTH_TO_DELETE {
+		respondWithError(w, http.StatusUnauthorized, "You don not have the authority to remove user")
+		return
+	}
+	username, _ := r.URL.Query().Get("username"), 64
+	log.Println(username)
+	err := userDao.DeleteUser(username)
+	if err != nil {
+		log.Println("Error in deleteing user: " + username)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, "done")
 }

@@ -9,13 +9,13 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"github.com/dgrijalva/jwt-go"
 
-	"strings"
+	"strconv"
 )
 
 var taskDao = dao.TaskDAO{}
 
 func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
-	if !isAdmin(r) {
+	if checkAuth(r) < AUTH_TO_MANAGE_TASK {
 		log.Println("Only admin can add tasks!")
 		respondWithError(w, http.StatusForbidden, "Only admin can add tasks!")
 		return
@@ -61,8 +61,9 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusCreated, imageSlot)
 }
 
-func FindImgIdByCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Received Find by imageID request")
+
+func FindImgURLByCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received Find images by category request")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 	taskId, _ := r.URL.Query().Get("task_id"), 64
@@ -70,31 +71,29 @@ func FindImgIdByCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(taskId)
 	log.Println(category)
 
-	var image []model.ImageSlot
-	if err, image := taskDao.FindImageByCategoryII(bson.ObjectIdHex(taskId), category); err != nil {
-		log.Println(image)
-		log.Println("DB find error")
-		log.Println(err.Error())
-		respondWithError(w, http.StatusConflict, err.Error())
+	err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
+	if err != nil {
+		log.Println("Error in finding task")
+		respondWithError(w, http.StatusInternalServerError, "Error in finding task")
 		return
 	}
-	log.Println(image)
-	var imageIdList []bson.ObjectId
-	for _, imageSlot := range image {
-		imageId := imageSlot.ImageID
-		imageIdList = append(imageIdList, imageId)
+	//log.Println(task.Image)
+
+	images := task.Image
+	var urls []string
+	for _, image := range images {
+		if image.Category == category {
+			urls = append(urls, image.URL)
+		}
 	}
-	log.Println(imageIdList)
-	js, err := json.Marshal(imageIdList)
-	if err != nil {
-		log.Println("Error to parse imageId")
-	}
-	respondWithJson(w, http.StatusOK, js)
+	log.Println(urls)
+	respondWithJson(w, http.StatusOK, urls)
 }
 
-func isAdmin(r *http.Request) bool {
+func checkAuth(r *http.Request) int {
 	user := r.Context().Value("user")
 	claims := user.(*jwt.Token).Claims
-	username := claims.(jwt.MapClaims)["username"]
-	return strings.Compare(userDao.FindAuthority(username.(string)), "admin") == 0
+	authority := claims.(jwt.MapClaims)["authority"]
+	auth, _ := strconv.Atoi(authority.(string))
+	return auth
 }

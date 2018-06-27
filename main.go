@@ -20,9 +20,10 @@ func main() {
 	r.Handle("/register", http.HandlerFunc(SignupHandler)).Methods("POST")
 	r.Handle("/login", http.HandlerFunc(LoginHandler)).Methods("POST")
 	r.Handle("/userProfile", jwtMiddleware.Handler(http.HandlerFunc(UserProfileHandler))).Methods("GET")
+	r.Handle("/removeUser", jwtMiddleware.Handler(http.HandlerFunc(RemoveUserHandler))).Methods("POST")
 	r.Handle("/addTask", jwtMiddleware.Handler(http.HandlerFunc(AddTaskHandler))).Methods("POST")
 	r.Handle("/addImage", http.HandlerFunc(AddImageHandler)).Methods("POST")
-	r.Handle("/findByCategory", http.HandlerFunc(FindImgIdByCategoryHandler)).Methods("GET")
+	r.Handle("/findImageByCategory", http.HandlerFunc(FindImgURLByCategoryHandler)).Methods("GET")
 	r.Handle("/findAll", http.HandlerFunc(GetAllUsersHandler)).Methods("GET")
 	log.Println("Listening on port 8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {

@@ -45,7 +45,7 @@ func (m *UserDAO) AddUser(user model.User) error {
 	return err
 }
 
-func (m *UserDAO) CheckUser(username, password string) bool {
+func (m *UserDAO) CheckUser(username, password string) bool{
 	m.Connect()
 	defer m.session.Close()
 	var user model.User
@@ -63,10 +63,10 @@ func (m *UserDAO) FindUser(username string) (error, model.User) {
 	defer m.session.Close()
 	var user model.User
 	err := m.db.C(USER_COLLECTION).Find(bson.M{"username": username}).One(&user)
-	if err != nil {
-		log.Println("Error in finding username: " + username)
-		return err, user
-	}
+	//if err != nil {
+	//	log.Println("Error in finding username: " + username)
+	//	return err, user
+	//}
 	return err, user
 }
 
@@ -89,4 +89,11 @@ func (m *UserDAO) FindAuthority(username string) string {
 		return ""
 	}
 	return user.Authority
+}
+
+func (m *UserDAO) DeleteUser(username string) error {
+	m.Connect()
+	defer m.session.Close()
+	err := m.db.C(USER_COLLECTION).Remove(bson.M{"username": username})
+	return err
 }
