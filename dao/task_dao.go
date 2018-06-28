@@ -43,14 +43,28 @@ func (m *TaskDAO) AddTask(task model.Task) error {
 	return err
 }
 
-func (m *TaskDAO) AddImage(imageSlot model.ImageSlot) error {
+func (m *TaskDAO) AddPrevImage(imageSlot model.ImageSlot) error {
 	m.Connect()
 	defer m.session.Close()
+
 	err := m.db.C(TASK_COLLECTION).Update(
+		bson.M{"task_id": imageSlot.TaskID, "list.cate": imageSlot.Cate, "each.item": imageSlot.ItemId},
+		bson.M{"$push": bson.M{"each.$.prev":imageSlot}})
+
+	m.db.C(TASK_COLLECTION).Update(
 		bson.M{"task_id": imageSlot.TaskID},
-		bson.M{"$push": bson.M{"image": imageSlot}})
+		bson.M{"$inc": bson.M{"totalImage": 1}})
 	return err
 }
+
+//func (m* TaskDAO) FindTotalImage(taskID bson.ObjectId) error {
+//	m.Connect()
+//	defer m.session.Close()
+//	m.db.C(TASK_COLLECTION).Update(
+//		bson.M{"task_id": taskID},
+//		bson.M{""}
+//	)
+//}
 
 func (m *TaskDAO) FindByUsername(username string) (error, []model.Task) {
 	m.Connect()

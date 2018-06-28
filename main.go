@@ -26,7 +26,7 @@ func main() {
 	r.Handle("/deleteImageFromTask", jwtMiddleware.Handler(http.HandlerFunc(DeleteImageHandler))).Methods("POST")
 	r.Handle("/deleteTask", jwtMiddleware.Handler(http.HandlerFunc(DeleteTaskHandler))).Methods("POST")
 	r.Handle("/ChangeTaskUser", jwtMiddleware.Handler(http.HandlerFunc(ChangeContractorHandler))).Methods("POST")
-	r.Handle("/findImageByCategory", http.HandlerFunc(FindImgURLByCategoryHandler)).Methods("GET")
+	//r.Handle("/findImageByCategory", http.HandlerFunc(FindImgURLByCategoryHandler)).Methods("GET")
 	r.Handle("/findAll", http.HandlerFunc(GetAllUsersHandler)).Methods("GET")
 	log.Println("Listening on port 8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {

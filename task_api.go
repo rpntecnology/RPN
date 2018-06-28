@@ -66,13 +66,15 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	// If the file size is larger than maxMemory, the rest of the data will be saved in a system temporary file.
 	r.ParseMultipartForm(32 << 20)
 	taskId, _ := r.FormValue("task_id"), 64
-	category, _ := r.FormValue("category"), 64
+	cate, _ := r.FormValue("category"), 64
+	itemId, _ := strconv.ParseInt(r.FormValue("itemId"), 10, 64)
 	status, _ := r.FormValue("status"), 64
 	log.Println("taskId: " + taskId)
-	log.Println("category: " + category)
+	log.Println("cate: " + cate)
 	imageSlot.ImageID = bson.NewObjectId()
 	imageSlot.TaskID = bson.ObjectIdHex(taskId)
-	imageSlot.Category = category
+	imageSlot.Cate = cate
+	imageSlot.ItemId = itemId
 	imageSlot.Status = status
 	log.Println(imageSlot.TaskID)
 	file, _, err := r.FormFile("image")
@@ -105,7 +107,7 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	imageSlot.Src = attrs.MediaLink
 
 
-	if err := taskDao.AddImage(imageSlot); err != nil {
+	if err := taskDao.AddPrevImage(imageSlot); err != nil {
 		log.Println("DB insert error")
 		log.Println(err.Error())
 		respondWithError(w, http.StatusConflict, err.Error())
@@ -117,33 +119,33 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func FindImgURLByCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Received Find images by category request")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-	taskId, _ := r.URL.Query().Get("task_id"), 64
-	category, _ := r.URL.Query().Get("category"), 64
-	log.Println(taskId)
-	log.Println(category)
-
-	err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
-	if err != nil {
-		log.Println("Error in finding task")
-		respondWithError(w, http.StatusInternalServerError, "Error in finding task")
-		return
-	}
-	//log.Println(task.Image)
-
-	images := task.Image
-	var urls []string
-	for _, image := range images {
-		if image.Category == category {
-			urls = append(urls, image.Src)
-		}
-	}
-	log.Println(urls)
-	respondWithJson(w, http.StatusOK, urls)
-}
+//func FindImgURLByCategoryHandler(w http.ResponseWriter, r *http.Request) {
+//	log.Println("Received Find images by category request")
+//	w.Header().Set("Access-Control-Allow-Origin", "*")
+//	w.Header().Set("Content-Type", "application/json")
+//	taskId, _ := r.URL.Query().Get("task_id"), 64
+//	category, _ := r.URL.Query().Get("category"), 64
+//	log.Println(taskId)
+//	log.Println(category)
+//
+//	err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
+//	if err != nil {
+//		log.Println("Error in finding task")
+//		respondWithError(w, http.StatusInternalServerError, "Error in finding task")
+//		return
+//	}
+//	//log.Println(task.Image)
+//
+//	images := task.Image
+//	var urls []string
+//	for _, image := range images {
+//		if image.Category == category {
+//			urls = append(urls, image.Src)
+//		}
+//	}
+//	log.Println(urls)
+//	respondWithJson(w, http.StatusOK, urls)
+//}
 
 
 func DeleteImageHandler(w http.ResponseWriter, r *http.Request) {
