@@ -66,17 +66,21 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	// If the file size is larger than maxMemory, the rest of the data will be saved in a system temporary file.
 	r.ParseMultipartForm(32 << 20)
 	taskId, _ := r.FormValue("task_id"), 64
-	cate, _ := r.FormValue("category"), 64
-	itemId, _ := strconv.ParseInt(r.FormValue("itemId"), 10, 64)
+	name, _ := r.FormValue("name"), 64
+	cate, _ := r.FormValue("cate"), 64
+	itemId, _ := r.FormValue("itemId"), 64
 	status, _ := r.FormValue("status"), 64
+	log.Println("itemId: " + itemId)
 	log.Println("taskId: " + taskId)
 	log.Println("cate: " + cate)
+	log.Println("status" + status)
 	imageSlot.ImageID = bson.NewObjectId()
 	imageSlot.TaskID = bson.ObjectIdHex(taskId)
+	imageSlot.Name = name
 	imageSlot.Cate = cate
 	imageSlot.ItemId = itemId
 	imageSlot.Status = status
-	log.Println(imageSlot.TaskID)
+	//log.Println(imageSlot.TaskID)
 	file, _, err := r.FormFile("image")
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Image is not available")

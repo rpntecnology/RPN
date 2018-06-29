@@ -88,11 +88,34 @@ func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	claims := user.(*jwt.Token).Claims
 	username := claims.(jwt.MapClaims)["username"]
 
-	err, profile := userDao.FindUser(username.(string))
+
+	err, tasks := taskDao.FindTasksByUsername(username.(string))
 	if err != nil {
 		respondWithError(w, http.StatusNoContent, err.Error())
 	}
-	respondWithJson(w, http.StatusOK, profile)
+	log.Println(tasks)
+	var response []model.ResponseProfile
+	for _, task := range tasks {
+		var profile model.ResponseProfile
+		profile.Username = task.Username
+		profile.Name = task.Name
+		profile.Invoice = task.Invoice
+		profile.BillTo = task.BillTo
+		profile.CompletionDate = task.CompletionDate
+		profile.InvoiceDate = task.InvoiceDate
+		profile.Address = task.Address
+		profile.City = task.City
+		profile.Year = task.Year
+		profile.Stories = task.Stories
+		profile.Area = task.Area
+		profile.TotalCost = task.TotalCost
+		profile.List = task.List
+		profile.TotalImage = task.TotalImage
+		profile.Stage = task.Stage
+		response = append(response, profile)
+	}
+	log.Println(response)
+	respondWithJson(w, http.StatusOK, response)
 }
 
 func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
