@@ -10,7 +10,7 @@ type ImageSlot struct {
 	Name			string        `bson:"name"  		json:"name"`
 	Format			string		  `bson:"format" 		json:"format"`
 	Cate		    string        `bson:"cate" 			json:"cate"`
-	ItemId			string		  `bson:"itemId         json:"itemId""`
+	ItemId			string		  `bson:"itemId"         json:"itemId"`
 	Src				string        `bson:"src"      		json:"src"`
 	Status			string        `bson:"status" 		json:"status"`
 }

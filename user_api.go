@@ -97,6 +97,7 @@ func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	var response []model.ResponseProfile
 	for _, task := range tasks {
 		var profile model.ResponseProfile
+		profile.TaskID = task.TaskID
 		profile.Username = task.Username
 		profile.Name = task.Name
 		profile.Invoice = task.Invoice
@@ -109,7 +110,7 @@ func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
 		profile.Stories = task.Stories
 		profile.Area = task.Area
 		profile.TotalCost = task.TotalCost
-		profile.List = task.List
+		profile.ItemList = task.ItemList
 		profile.TotalImage = task.TotalImage
 		profile.Stage = task.Stage
 		response = append(response, profile)

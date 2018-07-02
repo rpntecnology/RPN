@@ -47,12 +47,13 @@ func (m *TaskDAO) AddPrevImage(imageSlot model.ImageSlot) error {
 	m.Connect()
 	defer m.session.Close()
 	err := m.db.C(TASK_COLLECTION).Update(
-		bson.M{"task_id": imageSlot.TaskID, "list.cate": imageSlot.Cate, "list.each.item": imageSlot.ItemId},
-		bson.M{"$push": bson.M{"list.$[].each.$[].before":imageSlot}})
-		//bson.M{"$push": bson.M{"list.$.each":bson.M{}}})
-	//m.db.C(TASK_COLLECTION).Update(
-	//	bson.M{"task_id": imageSlot.TaskID},
-	//	bson.M{"$inc": bson.M{"totalImage": 1}})
+		bson.M{"task_id": imageSlot.TaskID, "item_list": bson.M{"$elemMatch": bson.M{"cate": imageSlot.Cate, "item":imageSlot.ItemId}}},
+		bson.M{"$push": bson.M{"item_list.$.before":imageSlot}})
+
+
+	m.db.C(TASK_COLLECTION).Update(
+		bson.M{"task_id": imageSlot.TaskID},
+		bson.M{"$inc": bson.M{"totalImage": 1}})
 	return err
 }
 
@@ -82,34 +83,34 @@ func (m *TaskDAO) FindById(taskId bson.ObjectId) (error, model.Task) {
 }
 
 
-func (m *TaskDAO) FindImageByCategory(taskID bson.ObjectId, category string) (error, []model.ImageSlot) {
-	m.Connect()
-	defer m.session.Close()
-	var Images []model.ImageSlot
-	pipeline := []bson.M {
-		bson.M{"$match": bson.M{"task_id": taskID}},
-		bson.M{"$unwind": "$image"},
-		bson.M{"$match": bson.M{"image.category": category}},
-	}
-	pipe := m.db.C(TASK_COLLECTION).Pipe(pipeline)
-	log.Println(pipeline)
-	resp := []bson.M{}
-	var task1 model.Task
-	//resp := []model.Task{}
-	err1 := pipe.All(&resp)
-	err2 := pipe.One(&task1)
-	if err1 != nil {
-		log.Println(err1.Error())
-	}
-	if err2 != nil {
-		log.Println(err1.Error())
-	}
-	log.Println("resp: ")
-	log.Println(resp[1])
-	log.Println(task1)
-	err := pipe.All(&Images)
-	return err, Images
-}
+//func (m *TaskDAO) FindImageByCategory(taskID bson.ObjectId, category string) (error, []model.ImageSlot) {
+//	m.Connect()
+//	defer m.session.Close()
+//	var Images []model.ImageSlot
+//	pipeline := []bson.M {
+//		bson.M{"$match": bson.M{"task_id": taskID}},
+//		bson.M{"$unwind": "$image"},
+//		bson.M{"$match": bson.M{"image.category": category}},
+//	}
+//	pipe := m.db.C(TASK_COLLECTION).Pipe(pipeline)
+//	log.Println(pipeline)
+//	resp := []bson.M{}
+//	var task1 model.Task
+//	//resp := []model.Task{}
+//	err1 := pipe.All(&resp)
+//	err2 := pipe.One(&task1)
+//	if err1 != nil {
+//		log.Println(err1.Error())
+//	}
+//	if err2 != nil {
+//		log.Println(err1.Error())
+//	}
+//	log.Println("resp: ")
+//	log.Println(resp[1])
+//	log.Println(task1)
+//	err := pipe.All(&Images)
+//	return err, Images
+//}
 
 //new added functions
 func (m *TaskDAO) DeleteImageByImageID(taskID bson.ObjectId, imageID bson.ObjectId) (error) {
@@ -128,12 +129,40 @@ func (m *TaskDAO) DeleteTaskByTaskID(taskID bson.ObjectId) (error) {
 	return err
 }
 
-func (m *TaskDAO) AssignTaskToAnotherUser(taskID bson.ObjectId, new_user string) (error) {
+func (m *TaskDAO) AssignTaskToAnotherUser(taskID bson.ObjectId, newUser string) error {
 	m.Connect()
 	defer m.session.Close()
 	//var task model.Task
-	err := m.db.C(TASK_COLLECTION).Update(bson.M{"task_id": taskID}, bson.M{"$set": bson.M{"username" : new_user}})
+	err := m.db.C(TASK_COLLECTION).Update(bson.M{"task_id": taskID}, bson.M{"$set": bson.M{"username" : newUser}})
 	return err
 }
 
+func (m *TaskDAO) AddCategory(taskID bson.ObjectId, cate model.List) error {
+	m.Connect()
+	defer m.session.Close()
+	err := m.db.C(TASK_COLLECTION).Update(bson.M{"task_id": taskID}, bson.M{"$push": bson.M{"list": cate}})
+	return err
+}
+
+func (m *TaskDAO) AddItem(taskID bson.ObjectId, cate string, item model.Each) error {
+	m.Connect()
+	defer m.session.Close()
+	err := m.db.C(TASK_COLLECTION).Update(
+		bson.M{"task_id": taskID, "list.cate": cate},
+		bson.M{"$push": bson.M{"list.$.each": item}})
+	return err
+}
+
+func (m *TaskDAO) FindImgs(taskID bson.ObjectId, cate, item, status string) (error, model.Task) {
+	m.Connect()
+	defer m.session.Close()
+	var task model.Task
+	//err := m.db.C(TASK_COLLECTION).Update(
+	//	bson.M{"task_id": imageSlot.TaskID, "list.cate": imageSlot.Cate, "list.each.item": imageSlot.ItemId},
+	//	bson.M{"$push": bson.M{"list.0.each.$.before":imageSlot}})
+	err := m.db.C(TASK_COLLECTION).Find(
+		bson.M{"task_id": taskID, "list.cate": cate, "list.0.each.item": item}).One(&task)
+
+	return err, task
+}
 

@@ -1,10 +1,13 @@
 package model
 
+import "gopkg.in/mgo.v2/bson"
+
 type Each struct {
-	//ID          		bson.ObjectId `bson:"each_id"       	json:"each_id"`
-	Item    			string        	  `bson:"item"      	json:"item"`
+	TaskID          	bson.ObjectId `bson:"task_id"       json:"task_id"`
+	Cate				string		  `bson:"cate"  		json:"cate"`
+	Item    			string        `bson:"item"      	json:"item"`
 	Description         string        `bson:"description"   json:"description"`
-	Qty        			string       	  `bson:"qty"  			json:"qty"`
+	Qty        			string        `bson:"qty"  			json:"qty"`
 	UM					string		  `bson:"UM"  			json:"UM"`
 	PPU 				string		  `bson:"PPU"  			json:"PPU"`
 	Cost				string		  `bson:"cost"  		json:"cost"`

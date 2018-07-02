@@ -1,6 +1,9 @@
 package model
 
+import "gopkg.in/mgo.v2/bson"
+
 type ResponseProfile struct {
+	TaskID          bson.ObjectId `bson:"task_id" 			json:"task_id"`
 	Username        string        `bson:"username" 			json:"username"`
 	Name			string        `bson:"name" 				json:"name"`
 	Invoice         string        `bson:"invoice" 			json:"invoice"`
@@ -13,7 +16,7 @@ type ResponseProfile struct {
 	Stories			string        `bson:"stories" 			json:"stories"`
 	Area            string        `bson:"area" 			    json:"area"`
 	TotalCost       string        `bson:"totolCost" 	    json:"totalCost"`
-	List        	[]List        `bson:"list" 		        json:"list"`
+	ItemList       	[]Each        `bson:"list" 		        json:"list"`
 	TotalImage      int           `bson:"totalImage" 		json:"totalImage"`
 	Stage           string        `bson:"stage" 			json:"stage"`
 }

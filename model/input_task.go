@@ -2,7 +2,7 @@ package model
 
 import "gopkg.in/mgo.v2/bson"
 
-type Task struct {
+type InputTask struct {
 	TaskID          bson.ObjectId `bson:"task_id" 			json:"task_id"`
 	Invoice         string        `bson:"invoice" 			json:"invoice"`
 	BillTo			string		  `bson:"billTo" 			json:"billTo"`
@@ -16,10 +16,8 @@ type Task struct {
 	Stories			string        `bson:"stories" 			json:"stories"`
 	Area            string        `bson:"area" 			    json:"area"`
 	TotalCost       string        `bson:"totolCost" 	    json:"totalCost"`
-	//Bdate			string        `bson:"bdate" 			json:"bdate"`
-	//List        	[]List        `bson:"list" 		        json:"list"`
-	ItemList		[]Each        `bson:"item_list" 		json:"item_list"`
+	Bdate			string        `bson:"bdate" 			json:"bdate"`
+	List        	[]List        `bson:"list" 		        json:"list"`
 	TotalImage      int           `bson:"totalImage" 		json:"totalImage"`
-	//Image           []ImageSlot   `bson:"image" 			json:"image"`
 	Stage           string        `bson:"stage" 			json:"stage"`
 }

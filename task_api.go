@@ -28,11 +28,13 @@ func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Received new add task request")
 	defer r.Body.Close()
-	var task model.Task
-	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
+	var inTask model.InputTask
+	if err := json.NewDecoder(r.Body).Decode(&inTask); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	task := TransformTask(inTask)
 	task.TaskID = bson.NewObjectId()
 	//
 	if err := taskDao.AddTask(task); err != nil {
@@ -68,7 +70,7 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	taskId, _ := r.FormValue("task_id"), 64
 	name, _ := r.FormValue("name"), 64
 	cate, _ := r.FormValue("cate"), 64
-	itemId, _ := r.FormValue("itemId"), 64
+	itemId, _ := r.FormValue("item_id"), 64
 	status, _ := r.FormValue("status"), 64
 	log.Println("itemId: " + itemId)
 	log.Println("taskId: " + taskId)
@@ -89,7 +91,13 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
+	// parse multiple images
+	//fhs := r.MultipartForm.File["images"]
+	//for _, fh := range fhs {
+	//
+	//}
 	// read image's extension
+
 	img, header, _ := r.FormFile("image")
 	defer img.Close()
 	suffix := filepath.Ext(header.Filename)
@@ -117,39 +125,69 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusConflict, err.Error())
 		return
 	}
-	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 	respondWithJson(w, http.StatusCreated, imageSlot)
 }
 
 
-//func FindImgURLByCategoryHandler(w http.ResponseWriter, r *http.Request) {
-//	log.Println("Received Find images by category request")
-//	w.Header().Set("Access-Control-Allow-Origin", "*")
-//	w.Header().Set("Content-Type", "application/json")
-//	taskId, _ := r.URL.Query().Get("task_id"), 64
-//	category, _ := r.URL.Query().Get("category"), 64
-//	log.Println(taskId)
-//	log.Println(category)
-//
-//	err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
-//	if err != nil {
-//		log.Println("Error in finding task")
-//		respondWithError(w, http.StatusInternalServerError, "Error in finding task")
-//		return
-//	}
-//	//log.Println(task.Image)
-//
-//	images := task.Image
-//	var urls []string
-//	for _, image := range images {
-//		if image.Category == category {
-//			urls = append(urls, image.Src)
-//		}
-//	}
-//	log.Println(urls)
-//	respondWithJson(w, http.StatusOK, urls)
-//}
+func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
+	//log.Println("Received Find images urls request")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Content-Type", "application/json")
+	//taskId, _ := r.URL.Query().Get("task_id"), 64
+	//cate, _ := r.URL.Query().Get("cate"), 64
+	//itemId, _ := r.URL.Query().Get("item_id"), 64
+	//
+	//log.Println("task_id: " + taskId)
+	//log.Println("cate: " + cate)
+	//log.Println("item_id: " + itemId)
+	//
+	//err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
+	//if err != nil {
+	//	log.Println("Error in finding task")
+	//	respondWithError(w, http.StatusInternalServerError, "Error in finding task")
+	//	return
+	//}
+	////log.Println(task.Image)
+	//
+	//cateList := task.List
+	//var itemList []model.Each
+	//var images []model.ImageSlot
+	//for _, list := range cateList {
+	//	if list.Cate == cate {
+	//		itemList = list.Each
+	//	}
+	//}
+	//
+	//if len(itemList) == 0 {
+	//	log.Println("Error in finding items in such category: " + cate)
+	//	respondWithError(w, http.StatusInternalServerError, "Error in finding items in such category: " + cate)
+	//	return
+	//}
+	//
+	//for _, item := range itemList {
+	//	if item.Item == itemId {
+	//		images = item.Before
+	//	}
+	//}
+	//
+	//if len(images) == 0 {
+	//	log.Println("Error in finding images in such item: " + itemId)
+	//	respondWithError(w, http.StatusInternalServerError, "Error in finding images in such item: " + itemId)
+	//	return
+	//}
+	//
+	////var response []model.ResponseImage
+	////for i:= 0; i < len(images); i++ {
+	////	response[i].Name = images[i].Name
+	////	response[i].Src = images[i].Src
+	////}
+	//
+	//log.Println(images)
+	//respondWithJson(w, http.StatusOK, images)
+}
 
 
 func DeleteImageHandler(w http.ResponseWriter, r *http.Request) {
@@ -200,7 +238,7 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ChangeContractorHandler(w http.ResponseWriter, r *http.Request) {
-	if checkAuth(r) < AUTH_TO_DELETE {
+	if checkAuth(r) < AUTH_TO_MANAGE_TASK {
 		respondWithError(w, http.StatusInternalServerError, "No authority to assign work")
 		log.Println("No authority to assign work")
 		return
@@ -223,6 +261,55 @@ func ChangeContractorHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("changed task's contractor successfully")
 }
 
+func AddCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	//if checkAuth(r) < AUTH_TO_MANAGE_TASK {
+	//	respondWithError(w, http.StatusInternalServerError, "No authority to add category")
+	//	log.Println("No authority to add category")
+	//	return
+	//}
+	//log.Println("Received add category request")
+	//defer r.Body.Close()
+	//var cate model.List
+	//if err := json.NewDecoder(r.Body).Decode(&cate); err != nil {
+	//	respondWithError(w, http.StatusInternalServerError, err.Error())
+	//	return
+	//}
+	//
+	//if err := taskDao.AddCategory(cate.TaskID, cate); err != nil {
+	//	log.Println("DB insert error")
+	//	log.Println(err.Error())
+	//	respondWithError(w, http.StatusConflict, err.Error())
+	//	return
+	//}
+	//w.Header().Set("Content-Type", "application/json")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	//respondWithJson(w, http.StatusCreated, cate)
+}
+
+func AddItemHandler (w http.ResponseWriter, r *http.Request) {
+	if checkAuth(r) < AUTH_TO_MANAGE_TASK {
+		respondWithError(w, http.StatusInternalServerError, "No authority to add items")
+		log.Println("No authority to add items")
+		return
+	}
+	log.Println("Received add items request")
+	defer r.Body.Close()
+	var item model.Each
+	if err := json.NewDecoder(r.Body).Decode(&item); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := taskDao.AddItem(item.TaskID, item.Cate, item); err != nil {
+		log.Println("DB insert error")
+		log.Println(err.Error())
+		respondWithError(w, http.StatusConflict, err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	respondWithJson(w, http.StatusCreated, item)
+}
 
 func checkAuth(r *http.Request) int {
 	user := r.Context().Value("user")
@@ -263,4 +350,32 @@ func saveToGCS(ctx context.Context, r io.Reader, bucketName, name string) (*stor
 	attrs, err := obj.Attrs(ctx)
 	log.Printf("Post is saved to GCS: %s\n", attrs.MediaLink)
 	return obj, attrs, err
+}
+
+func TransformTask(inTask model.InputTask) model.Task {
+	var task model.Task
+	task.Invoice = inTask.Invoice
+	task.BillTo = inTask.BillTo
+	task.CompletionDate = inTask.CompletionDate
+	task.InvoiceDate = inTask.InvoiceDate
+	task.Username = inTask.Username
+	task.Name = inTask.Name
+	task.Address = inTask.Address
+	task.City = inTask.City
+	task.Year = inTask.Year
+	task.Stories = inTask.Stories
+	task.Area = inTask.Area
+	task.TotalCost = inTask.TotalCost
+	task.TotalImage = inTask.TotalImage
+	task.Stage = inTask.Stage
+
+	var itemList []model.Each
+	cateList := inTask.List
+	for _, cate := range cateList {
+		for _, item := range cate.Each {
+			itemList = append(itemList, item)
+		}
+	}
+	task.ItemList = itemList
+	return task
 }
