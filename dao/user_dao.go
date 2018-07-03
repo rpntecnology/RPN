@@ -97,3 +97,12 @@ func (m *UserDAO) DeleteUser(username string) error {
 	err := m.db.C(USER_COLLECTION).Remove(bson.M{"username": username})
 	return err
 }
+
+func (m *UserDAO) AssignTask(username string, taskId bson.ObjectId) error {
+	m.Connect()
+	defer m.session.Close()
+	err := m.db.C(USER_COLLECTION).Update(
+		bson.M{"username": username},
+		bson.M{"$push": bson.M{"task_ids": taskId}})
+	return err
+}

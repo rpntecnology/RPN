@@ -83,34 +83,6 @@ func (m *TaskDAO) FindById(taskId bson.ObjectId) (error, model.Task) {
 }
 
 
-//func (m *TaskDAO) FindImageByCategory(taskID bson.ObjectId, category string) (error, []model.ImageSlot) {
-//	m.Connect()
-//	defer m.session.Close()
-//	var Images []model.ImageSlot
-//	pipeline := []bson.M {
-//		bson.M{"$match": bson.M{"task_id": taskID}},
-//		bson.M{"$unwind": "$image"},
-//		bson.M{"$match": bson.M{"image.category": category}},
-//	}
-//	pipe := m.db.C(TASK_COLLECTION).Pipe(pipeline)
-//	log.Println(pipeline)
-//	resp := []bson.M{}
-//	var task1 model.Task
-//	//resp := []model.Task{}
-//	err1 := pipe.All(&resp)
-//	err2 := pipe.One(&task1)
-//	if err1 != nil {
-//		log.Println(err1.Error())
-//	}
-//	if err2 != nil {
-//		log.Println(err1.Error())
-//	}
-//	log.Println("resp: ")
-//	log.Println(resp[1])
-//	log.Println(task1)
-//	err := pipe.All(&Images)
-//	return err, Images
-//}
 
 //new added functions
 func (m *TaskDAO) DeleteImageByImageID(taskID bson.ObjectId, imageID bson.ObjectId) (error) {
@@ -153,16 +125,5 @@ func (m *TaskDAO) AddItem(taskID bson.ObjectId, cate string, item model.Each) er
 	return err
 }
 
-func (m *TaskDAO) FindImgs(taskID bson.ObjectId, cate, item, status string) (error, model.Task) {
-	m.Connect()
-	defer m.session.Close()
-	var task model.Task
-	//err := m.db.C(TASK_COLLECTION).Update(
-	//	bson.M{"task_id": imageSlot.TaskID, "list.cate": imageSlot.Cate, "list.each.item": imageSlot.ItemId},
-	//	bson.M{"$push": bson.M{"list.0.each.$.before":imageSlot}})
-	err := m.db.C(TASK_COLLECTION).Find(
-		bson.M{"task_id": taskID, "list.cate": cate, "list.0.each.item": item}).One(&task)
 
-	return err, task
-}
 

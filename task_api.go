@@ -20,7 +20,7 @@ import (
 var taskDao = dao.TaskDAO{}
 
 func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
-	if checkAuth(r) < AUTH_TO_MANAGE_TASK {
+	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
 		log.Println("No authority to add task")
 		respondWithError(w, http.StatusForbidden, "No authority to add task")
 		return
@@ -49,19 +49,19 @@ func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddImageHandler(w http.ResponseWriter, r *http.Request) {
-	if checkAuth(r) < 0 {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	log.Println("Received new add image request")
+	if CheckAuth(r) < 0 {
 		log.Println("No authority to post images")
 		respondWithError(w, http.StatusForbidden, "No authority to post images")
 		return
 	}
-	log.Println("Received new add image request")
+
 	defer r.Body.Close()
 	var imageSlot model.ImageSlot
-	//if err := json.NewDecoder(r.Body).Decode(&imageSlot); err != nil {
-	//	respondWithError(w, http.StatusInternalServerError, err.Error())
-	//	return
-	//}
-
 
 	// 32 << 20 is the maxMemory param for ParseMultipartForm, equals to 32MB (1MB = 1024 * 1024 bytes = 2^20 bytes)
 	// After you call ParseMultipartForm, the file will be saved in the server memory with maxMemory size.
@@ -72,17 +72,19 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	cate, _ := r.FormValue("cate"), 64
 	itemId, _ := r.FormValue("item_id"), 64
 	status, _ := r.FormValue("status"), 64
+
 	log.Println("itemId: " + itemId)
 	log.Println("taskId: " + taskId)
 	log.Println("cate: " + cate)
 	log.Println("status" + status)
+
 	imageSlot.ImageID = bson.NewObjectId()
 	imageSlot.TaskID = bson.ObjectIdHex(taskId)
 	imageSlot.Name = name
 	imageSlot.Cate = cate
 	imageSlot.ItemId = itemId
 	imageSlot.Status = status
-	//log.Println(imageSlot.TaskID)
+
 	file, _, err := r.FormFile("image")
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Image is not available")
@@ -120,78 +122,55 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 
 
 	if err := taskDao.AddPrevImage(imageSlot); err != nil {
-		log.Println("DB insert error")
-		log.Println(err.Error())
 		respondWithError(w, http.StatusConflict, err.Error())
+		log.Println("DB insert error, err: " + err.Error())
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+
 	respondWithJson(w, http.StatusCreated, imageSlot)
 }
 
 
 func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
-	//log.Println("Received Find images urls request")
-	//w.Header().Set("Access-Control-Allow-Origin", "*")
-	//w.Header().Set("Content-Type", "application/json")
-	//taskId, _ := r.URL.Query().Get("task_id"), 64
-	//cate, _ := r.URL.Query().Get("cate"), 64
-	//itemId, _ := r.URL.Query().Get("item_id"), 64
-	//
-	//log.Println("task_id: " + taskId)
-	//log.Println("cate: " + cate)
-	//log.Println("item_id: " + itemId)
-	//
-	//err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
-	//if err != nil {
-	//	log.Println("Error in finding task")
-	//	respondWithError(w, http.StatusInternalServerError, "Error in finding task")
-	//	return
-	//}
-	////log.Println(task.Image)
-	//
-	//cateList := task.List
-	//var itemList []model.Each
-	//var images []model.ImageSlot
-	//for _, list := range cateList {
-	//	if list.Cate == cate {
-	//		itemList = list.Each
-	//	}
-	//}
-	//
-	//if len(itemList) == 0 {
-	//	log.Println("Error in finding items in such category: " + cate)
-	//	respondWithError(w, http.StatusInternalServerError, "Error in finding items in such category: " + cate)
-	//	return
-	//}
-	//
-	//for _, item := range itemList {
-	//	if item.Item == itemId {
-	//		images = item.Before
-	//	}
-	//}
-	//
-	//if len(images) == 0 {
-	//	log.Println("Error in finding images in such item: " + itemId)
-	//	respondWithError(w, http.StatusInternalServerError, "Error in finding images in such item: " + itemId)
-	//	return
-	//}
-	//
-	////var response []model.ResponseImage
-	////for i:= 0; i < len(images); i++ {
-	////	response[i].Name = images[i].Name
-	////	response[i].Src = images[i].Src
-	////}
-	//
-	//log.Println(images)
-	//respondWithJson(w, http.StatusOK, images)
+	log.Println("Received Find images urls request")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	taskId, _ := r.URL.Query().Get("task_id"), 64
+	cate, _ := r.URL.Query().Get("cate"), 64
+	itemId, _ := r.URL.Query().Get("item_id"), 64
+
+	log.Println("task_id: " + taskId)
+	log.Println("cate: " + cate)
+	log.Println("item_id: " + itemId)
+
+	err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
+	if err != nil {
+		log.Println("Error in finding task")
+		respondWithError(w, http.StatusInternalServerError, "Error in finding task")
+		return
+	}
+
+	var imgs []model.ImageSlot
+
+	for _, item := range task.ItemList {
+		if (item.Cate == cate && item.Item == itemId) {
+			imgs = item.Before
+		}
+	}
+
+	if len(imgs) == 0 {
+		log.Println("Error in finding images in such item: " + itemId)
+		respondWithError(w, http.StatusInternalServerError, "Error in finding images in such item: " + itemId)
+		return
+	}
+
+	log.Println(imgs)
+	respondWithJson(w, http.StatusOK, imgs)
 }
 
 
 func DeleteImageHandler(w http.ResponseWriter, r *http.Request) {
-	if checkAuth(r) < 0 {
+	if CheckAuth(r) < 0 {
 		respondWithError(w, http.StatusInternalServerError, "No authority to delete image")
 		log.Println("No authority to delete image")
 		return
@@ -216,7 +195,7 @@ func DeleteImageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
-	if checkAuth(r) < AUTH_TO_DELETE {
+	if CheckAuth(r) < AUTH_TO_DELETE {
 		respondWithError(w, http.StatusInternalServerError, "No authority to delete task")
 		log.Println("No authority to delete task")
 		return
@@ -238,7 +217,7 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ChangeContractorHandler(w http.ResponseWriter, r *http.Request) {
-	if checkAuth(r) < AUTH_TO_MANAGE_TASK {
+	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
 		respondWithError(w, http.StatusInternalServerError, "No authority to assign work")
 		log.Println("No authority to assign work")
 		return
@@ -287,7 +266,7 @@ func AddCategoryHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddItemHandler (w http.ResponseWriter, r *http.Request) {
-	if checkAuth(r) < AUTH_TO_MANAGE_TASK {
+	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
 		respondWithError(w, http.StatusInternalServerError, "No authority to add items")
 		log.Println("No authority to add items")
 		return
@@ -311,7 +290,7 @@ func AddItemHandler (w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusCreated, item)
 }
 
-func checkAuth(r *http.Request) int {
+func CheckAuth(r *http.Request) int {
 	user := r.Context().Value("user")
 	claims := user.(*jwt.Token).Claims
 	authority := claims.(jwt.MapClaims)["authority"]

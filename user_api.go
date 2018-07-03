@@ -36,7 +36,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusConflict, err.Error())
 		return
 	}
-	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	respondWithJson(w, http.StatusCreated, user)
 }
@@ -88,11 +88,10 @@ func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	claims := user.(*jwt.Token).Claims
 	username := claims.(jwt.MapClaims)["username"]
 
+	taskIds := getUsersTaskIds(username.(string))
+	tasks := getUsersTasks(taskIds)
 
-	err, tasks := taskDao.FindTasksByUsername(username.(string))
-	if err != nil {
-		respondWithError(w, http.StatusNoContent, err.Error())
-	}
+
 	log.Println(tasks)
 	var response []model.ResponseProfile
 	for _, task := range tasks {
@@ -151,3 +150,50 @@ func RemoveUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJson(w, http.StatusOK, "done")
 }
+
+func AddTaskToUserHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received add task to user request")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
+		log.Println("No authority to manage task")
+		respondWithError(w, http.StatusForbidden, "No authority to manage task")
+		return
+	}
+
+	username, _ := r.FormValue("username"), 64
+	taskId, _ := r.FormValue("task_id"), 64
+	log.Println("debug")
+	log.Println(username)
+	log.Println(taskId)
+	err := userDao.AssignTask(username, bson.ObjectIdHex(taskId))
+	if err != nil {
+		log.Println("Error in assigning tasks, err: " + err.Error())
+		respondWithError(w, http.StatusForbidden, "Error in assigning tasks")
+		return
+	}
+	respondWithJson(w, http.StatusOK, "done")
+}
+
+func getUsersTaskIds(username string) []bson.ObjectId {
+	err, user := userDao.FindUser(username)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return user.TaskIds
+}
+
+func getUsersTasks(taskIds []bson.ObjectId) []model.Task{
+	var tasks []model.Task
+
+	for _, taskId := range taskIds {
+		err, task := taskDao.FindById(taskId)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		tasks = append(tasks, task)
+	}
+	return tasks
+}
+

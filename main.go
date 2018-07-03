@@ -2,11 +2,12 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"net/http"
-	"log"
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
 	"RPN/config"
+	"net/http"
+	"log"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -27,14 +28,32 @@ func main() {
 	r.Handle("/deleteTask", jwtMiddleware.Handler(http.HandlerFunc(DeleteTaskHandler))).Methods("POST")
 	r.Handle("/addCategory", jwtMiddleware.Handler(http.HandlerFunc(AddCategoryHandler))).Methods("POST")
 	r.Handle("/addItem", jwtMiddleware.Handler(http.HandlerFunc(AddItemHandler))).Methods("POST")
+	r.Handle("/addTaskToUser", jwtMiddleware.Handler(http.HandlerFunc(AddTaskToUserHandler))).Methods("POST")
 	r.Handle("/changeTaskUser", jwtMiddleware.Handler(http.HandlerFunc(ChangeContractorHandler))).Methods("POST")
 	r.Handle("/findImg", http.HandlerFunc(FindImgURLHandler)).Methods("GET")
 	r.Handle("/findAll", http.HandlerFunc(GetAllUsersHandler)).Methods("GET")
+
+	//c := cors.New(cors.Options{
+	//	AllowedOrigins: []string{"http://localhost:8000"},
+	//	AllowCredentials: true,
+	//})
+	//handler := cors.Default().Handler(r)
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"*"},
+	})
+	handler := c.Handler(r)
+
+	http.Handle("/", r)
+
 	log.Println("Listening on port 8080")
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := http.ListenAndServe(":8080", handler); err != nil {
 		log.Fatal(err)
 	}
 }
+
+
 
 
 
