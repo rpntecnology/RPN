@@ -1,19 +1,17 @@
 package model
 
-import "gopkg.in/mgo.v2/bson"
-
 type Each struct {
-	TaskID          	bson.ObjectId `bson:"task_id"       json:"task_id"`
+	//TaskID          	bson.ObjectId `bson:"task_id"       json:"task_id"`
 	Cate				string		  `bson:"cate"  		json:"cate"`
-	Item    			string        `bson:"item"      	json:"item"`
+	Item    			int        `bson:"item"      	json:"item"`
 	Description         string        `bson:"description"   json:"description"`
-	Qty        			string        `bson:"qty"  			json:"qty"`
+	Qty        			int        `bson:"qty"  			json:"qty"`
 	UM					string		  `bson:"UM"  			json:"UM"`
-	PPU 				string		  `bson:"PPU"  			json:"PPU"`
-	Cost				string		  `bson:"cost"  		json:"cost"`
-	Amount              string        `bson:"amount"  		json:"amount"`
+	PPU 				float64		  `bson:"PPU"  			json:"PPU"`
+	Cost				float64		  `bson:"cost"  		json:"cost"`
+	Amount              float64        `bson:"amount"  		json:"amount"`
 	Taxable             bool		  `bson:"taxable"  		json:"taxble"`
-	Tax                 string		  `bson:"tax"  			json:"tax"`
+	Tax                 float64		  `bson:"tax"  			json:"tax"`
 	Comments 			string        `bson:"comments"  	json:"comments"`
 	Before				[]ImageSlot	  `bson:"before"  		json:"before"`
 	During				[]ImageSlot	  `bson:"during"  		json:"during"`

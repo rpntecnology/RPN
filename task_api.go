@@ -70,10 +70,10 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	taskId := r.FormValue("task_id")
 	name := r.FormValue("name")
 	cate := r.FormValue("cate")
-	itemId := r.FormValue("item_id")
+	itemId,_  := strconv.Atoi(r.FormValue("item_id"))
 	status := r.FormValue("status")
 
-	log.Println("itemId: " + itemId)
+	log.Println("itemId: " + strconv.Itoa(itemId))
 	log.Println("taskId: " + taskId)
 	log.Println("cate: " + cate)
 	log.Println("status" + status)
@@ -137,11 +137,11 @@ func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	taskId, _ := r.URL.Query().Get("task_id"), 64
 	cate, _ := r.URL.Query().Get("cate"), 64
-	itemId, _ := r.URL.Query().Get("item_id"), 64
+	itemId, _ := strconv.Atoi(r.URL.Query().Get("item_id"))
 
 	log.Println("task_id: " + taskId)
 	log.Println("cate: " + cate)
-	log.Println("item_id: " + itemId)
+	//log.Println("item_id: " + itemId)
 
 	err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
 	if err != nil {
@@ -153,14 +153,14 @@ func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
 	var imgs []model.ImageSlot
 
 	for _, item := range task.ItemList {
-		if (item.Cate == cate && item.Item == itemId) {
+		if item.Cate == cate && item.Item == itemId {
 			imgs = item.Before
 		}
 	}
 
 	if len(imgs) == 0 {
-		log.Println("Error in finding images in such item: " + itemId)
-		respondWithError(w, http.StatusInternalServerError, "Error in finding images in such item: " + itemId)
+		log.Println("Error in finding images in such item: " + strconv.Itoa(itemId))
+		respondWithError(w, http.StatusInternalServerError, "Error in finding images in such item: " + strconv.Itoa(itemId))
 		return
 	}
 
@@ -265,30 +265,30 @@ func AddCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	//respondWithJson(w, http.StatusCreated, cate)
 }
 
-func AddItemHandler (w http.ResponseWriter, r *http.Request) {
-	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
-		respondWithError(w, http.StatusInternalServerError, "No authority to add items")
-		log.Println("No authority to add items")
-		return
-	}
-	log.Println("Received add items request")
-	defer r.Body.Close()
-	var item model.Each
-	if err := json.NewDecoder(r.Body).Decode(&item); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if err := taskDao.AddItem(item.TaskID, item.Cate, item); err != nil {
-		log.Println("DB insert error")
-		log.Println(err.Error())
-		respondWithError(w, http.StatusConflict, err.Error())
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	respondWithJson(w, http.StatusCreated, item)
-}
+//func AddItemHandler (w http.ResponseWriter, r *http.Request) {
+//	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
+//		respondWithError(w, http.StatusInternalServerError, "No authority to add items")
+//		log.Println("No authority to add items")
+//		return
+//	}
+//	log.Println("Received add items request")
+//	defer r.Body.Close()
+//	var item model.Each
+//	if err := json.NewDecoder(r.Body).Decode(&item); err != nil {
+//		respondWithError(w, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//
+//	if err := taskDao.AddItem(item.TaskID, item.Cate, item); err != nil {
+//		log.Println("DB insert error")
+//		log.Println(err.Error())
+//		respondWithError(w, http.StatusConflict, err.Error())
+//		return
+//	}
+//	w.Header().Set("Content-Type", "application/json")
+//	w.Header().Set("Access-Control-Allow-Origin", "*")
+//	respondWithJson(w, http.StatusCreated, item)
+//}
 
 func CheckAuth(r *http.Request) int {
 	user := r.Context().Value("user")
@@ -354,6 +354,7 @@ func TransformTask(inTask model.InputTask) model.Task {
 	cateList := inTask.List
 	for _, cate := range cateList {
 		for _, item := range cate.Each {
+			item.Cate = cate.Cate
 			itemList = append(itemList, item)
 		}
 	}

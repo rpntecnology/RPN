@@ -50,7 +50,7 @@ func (m *TaskDAO) AddPrevImage(imageSlot model.ImageSlot) error {
 		bson.M{"task_id": imageSlot.TaskID, "item_list": bson.M{"$elemMatch": bson.M{"cate": imageSlot.Cate, "item":imageSlot.ItemId}}},
 		bson.M{"$push": bson.M{"item_list.$.before":imageSlot}})
 
-
+	// update total images
 	m.db.C(TASK_COLLECTION).Update(
 		bson.M{"task_id": imageSlot.TaskID},
 		bson.M{"$inc": bson.M{"totalImage": 1}})
@@ -85,15 +85,20 @@ func (m *TaskDAO) FindById(taskId bson.ObjectId) (error, model.Task) {
 
 
 //new added functions
-func (m *TaskDAO) DeleteImageByImageID(taskID bson.ObjectId, imageID bson.ObjectId) (error) {
+func (m *TaskDAO) DeleteImageByImageID(taskID bson.ObjectId, imageID bson.ObjectId) error {
 	m.Connect()
 	defer m.session.Close()
-	//var task model.Task
 	err := m.db.C(TASK_COLLECTION).Update(bson.M{"task_id": taskID}, bson.M{"$pull": bson.M{"image" : bson.M{"image_id" : imageID}}})
+
+	// update total images
+	m.db.C(TASK_COLLECTION).Update(
+		bson.M{"task_id": taskID},
+		bson.M{"$inc": bson.M{"totalImage": -1}})
+	return err
 	return err
 }
 
-func (m *TaskDAO) DeleteTaskByTaskID(taskID bson.ObjectId) (error) {
+func (m *TaskDAO) DeleteTaskByTaskID(taskID bson.ObjectId) error {
 	m.Connect()
 	defer m.session.Close()
 	//db.collection.remove({_id: item._id})
