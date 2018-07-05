@@ -162,8 +162,8 @@ func AddTaskToUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, _ := r.FormValue("username"), 64
-	taskId, _ := r.FormValue("task_id"), 64
+	username := r.FormValue("username")
+	taskId := r.FormValue("task_id")
 	log.Println("debug")
 	log.Println(username)
 	log.Println(taskId)

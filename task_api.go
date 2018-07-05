@@ -67,11 +67,11 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	// After you call ParseMultipartForm, the file will be saved in the server memory with maxMemory size.
 	// If the file size is larger than maxMemory, the rest of the data will be saved in a system temporary file.
 	r.ParseMultipartForm(32 << 20)
-	taskId, _ := r.FormValue("task_id"), 64
-	name, _ := r.FormValue("name"), 64
-	cate, _ := r.FormValue("cate"), 64
-	itemId, _ := r.FormValue("item_id"), 64
-	status, _ := r.FormValue("status"), 64
+	taskId := r.FormValue("task_id")
+	name := r.FormValue("name")
+	cate := r.FormValue("cate")
+	itemId := r.FormValue("item_id")
+	status := r.FormValue("status")
 
 	log.Println("itemId: " + itemId)
 	log.Println("taskId: " + taskId)
@@ -295,6 +295,8 @@ func CheckAuth(r *http.Request) int {
 	claims := user.(*jwt.Token).Claims
 	authority := claims.(jwt.MapClaims)["authority"]
 	auth, _ := strconv.Atoi(authority.(string))
+	log.Print("auth: ")
+	log.Println(auth)
 	return auth
 }
 

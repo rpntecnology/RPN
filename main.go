@@ -33,15 +33,12 @@ func main() {
 	r.Handle("/findImg", http.HandlerFunc(FindImgURLHandler)).Methods("GET")
 	r.Handle("/findAll", http.HandlerFunc(GetAllUsersHandler)).Methods("GET")
 
-	//c := cors.New(cors.Options{
-	//	AllowedOrigins: []string{"http://localhost:8000"},
-	//	AllowCredentials: true,
-	//})
-	//handler := cors.Default().Handler(r)
+
 
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders: []string{"*"},
 	})
 	handler := c.Handler(r)
 
