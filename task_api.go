@@ -19,6 +19,34 @@ import (
 
 var taskDao = dao.TaskDAO{}
 
+func InitTaskHandler(w http.ResponseWriter, r *http.Request) {
+	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
+		log.Println("No authority to add task")
+		respondWithError(w, http.StatusForbidden, "No authority to add task")
+		return
+	}
+
+	log.Println("Received new add task request")
+	defer r.Body.Close()
+	var task model.Task
+	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	task.TaskID = bson.NewObjectId()
+	//
+	if err := taskDao.AddTask(task); err != nil {
+		log.Println("DB insert error")
+		log.Println(err.Error())
+		respondWithError(w, http.StatusConflict, err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	respondWithJson(w, http.StatusCreated, task)
+}
+
 func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
 		log.Println("No authority to add task")
@@ -38,6 +66,48 @@ func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 	task.TaskID = bson.NewObjectId()
 	//
 	if err := taskDao.AddTask(task); err != nil {
+		log.Println("DB insert error")
+		log.Println(err.Error())
+		respondWithError(w, http.StatusConflict, err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	respondWithJson(w, http.StatusCreated, task)
+}
+
+func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
+	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
+		log.Println("No authority to add task")
+		respondWithError(w, http.StatusForbidden, "No authority to add task")
+		return
+	}
+
+	log.Println("Received new add task request")
+	defer r.Body.Close()
+	var inTask model.InputTask
+	if err := json.NewDecoder(r.Body).Decode(&inTask); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	//log.Println(inTask)
+	//log.Println("intask id: " + inTask.TaskID)
+	//log.Println("username: " + inTask.Username)
+	task := TransformTask(inTask)
+	//task.TaskID = bson.NewObjectId()
+
+	if err, existTask := taskDao.FindById(task.TaskID); err != nil {
+		log.Println("DB find error: no such task")
+		log.Println(err.Error())
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	} else {
+		task.AssetNumber = existTask.AssetNumber
+		task.StartDate = existTask.StartDate
+		task.Stage = existTask.Stage
+	}
+
+	if err := taskDao.UpdateTask(task); err != nil {
 		log.Println("DB insert error")
 		log.Println(err.Error())
 		respondWithError(w, http.StatusConflict, err.Error())
@@ -335,6 +405,7 @@ func saveToGCS(ctx context.Context, r io.Reader, bucketName, name string) (*stor
 
 func TransformTask(inTask model.InputTask) model.Task {
 	var task model.Task
+	task.TaskID = bson.ObjectIdHex(inTask.TaskID)
 	task.Invoice = inTask.Invoice
 	task.BillTo = inTask.BillTo
 	task.CompletionDate = inTask.CompletionDate

@@ -23,6 +23,8 @@ func main() {
 	r.Handle("/userProfile", jwtMiddleware.Handler(http.HandlerFunc(UserProfileHandler))).Methods("GET")
 	r.Handle("/removeUser", jwtMiddleware.Handler(http.HandlerFunc(RemoveUserHandler))).Methods("POST")
 	r.Handle("/addTask", jwtMiddleware.Handler(http.HandlerFunc(AddTaskHandler))).Methods("POST")
+	r.Handle("/initTask", jwtMiddleware.Handler(http.HandlerFunc(InitTaskHandler))).Methods("POST")
+	r.Handle("/updateTask", jwtMiddleware.Handler(http.HandlerFunc(UpdateTaskHandler))).Methods("POST")
 	r.Handle("/addImage", jwtMiddleware.Handler(http.HandlerFunc(AddImageHandler))).Methods("POST")
 	r.Handle("/deleteImageFromTask", jwtMiddleware.Handler(http.HandlerFunc(DeleteImageHandler))).Methods("POST")
 	r.Handle("/deleteTask", jwtMiddleware.Handler(http.HandlerFunc(DeleteTaskHandler))).Methods("POST")

@@ -43,6 +43,14 @@ func (m *TaskDAO) AddTask(task model.Task) error {
 	return err
 }
 
+func (m *TaskDAO) UpdateTask(task model.Task) error {
+	m.Connect()
+	defer m.session.Close()
+	err := m.db.C(TASK_COLLECTION).Update(
+		bson.M{"task_id": task.TaskID}, &task)
+	return err
+}
+
 func (m *TaskDAO) AddPrevImage(imageSlot model.ImageSlot) error {
 	m.Connect()
 	defer m.session.Close()

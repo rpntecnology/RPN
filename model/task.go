@@ -4,8 +4,11 @@ import "gopkg.in/mgo.v2/bson"
 
 type Task struct {
 	TaskID          bson.ObjectId `bson:"task_id" 			json:"task_id"`
+	//TaskID          string `bson:"task_id" 			json:"task_id"`
+	AssetNumber     string        `bson:"asset_num"         json:"asset_num"`
 	Invoice         string        `bson:"invoice" 			json:"invoice"`
 	BillTo			string		  `bson:"billTo" 			json:"billTo"`
+	StartDate       string        `bson:"startDate" 		json:"startDate"`
 	CompletionDate  string	  	  `bson:"completionDate" 	json:"completionDate"`
 	InvoiceDate		string        `bson:"invoiceDate" 	    json:"invoiceDate"`
 	Username        string        `bson:"username" 			json:"username"`

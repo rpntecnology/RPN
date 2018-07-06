@@ -1,9 +1,7 @@
 package model
 
-import "gopkg.in/mgo.v2/bson"
-
 type InputTask struct {
-	TaskID          bson.ObjectId `bson:"task_id" 			json:"task_id"`
+	TaskID          string		  `bson:"task_id" 			json:"task_id"`
 	Invoice         string        `bson:"invoice" 			json:"invoice"`
 	BillTo			string		  `bson:"billTo" 			json:"billTo"`
 	CompletionDate  string	  	  `bson:"completionDate" 	json:"completionDate"`

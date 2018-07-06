@@ -66,6 +66,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 		tokenString, _ := token.SignedString(config.MySigningKey)
 		w.Write([]byte(tokenString))
+		respondWithJson(w, http.StatusOK, userDb.Authority)
 		log.Println("tokenString: " + tokenString)
 		log.Println("Login successfully")
 	} else {
@@ -87,7 +88,7 @@ func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user")
 	claims := user.(*jwt.Token).Claims
 	username := claims.(jwt.MapClaims)["username"]
-
+	log.Println(username)
 	taskIds := getUsersTaskIds(username.(string))
 	tasks := getUsersTasks(taskIds)
 
@@ -179,7 +180,7 @@ func AddTaskToUserHandler(w http.ResponseWriter, r *http.Request) {
 func getUsersTaskIds(username string) []bson.ObjectId {
 	err, user := userDao.FindUser(username)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 	return user.TaskIds
 }
@@ -190,7 +191,7 @@ func getUsersTasks(taskIds []bson.ObjectId) []model.Task{
 	for _, taskId := range taskIds {
 		err, task := taskDao.FindById(taskId)
 		if err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		}
 		tasks = append(tasks, task)
 	}
