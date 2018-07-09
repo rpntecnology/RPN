@@ -7,6 +7,8 @@ const (
 	DB_NAME =  "RPN_proj"
 
 	BUCKET_NAME = "post-images-2039211"
+
+	API_PREFIX      = "/api/v1"
 )
 
 var MySigningKey = []byte("mySecret")
