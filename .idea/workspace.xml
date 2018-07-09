@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5851b348-f468-42c1-9c98-c4ee981a549b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/dao/task_dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/task_dao.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/input_task.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/input_task.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/task.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/task.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/task_api.go" beforeDir="false" afterPath="$PROJECT_DIR$/task_api.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_api.go" beforeDir="false" afterPath="$PROJECT_DIR$/user_api.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,11 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="task_api.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="task_api.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/task_api.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1395">
-              <caret line="108" selection-start-line="108" selection-end-line="108" />
+            <state relative-caret-position="433">
+              <caret line="192" column="26" lean-forward="true" selection-start-line="192" selection-start-column="26" selection-end-line="192" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -69,13 +64,13 @@
       <file leaf-file-name="main.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
+            <state relative-caret-position="87">
               <caret line="14" column="21" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="21" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="input_task.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="input_task.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/input_task.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="45">
@@ -156,8 +151,8 @@
         <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/user_api.go" />
         <option value="$PROJECT_DIR$/model/task.go" />
-        <option value="$PROJECT_DIR$/task_api.go" />
         <option value="$PROJECT_DIR$/model/input_task.go" />
+        <option value="$PROJECT_DIR$/task_api.go" />
       </list>
     </option>
   </component>
@@ -438,13 +433,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="14" column="21" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/list.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -476,13 +464,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/task_api.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1395">
-          <caret line="108" selection-start-line="108" selection-end-line="108" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/task.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -494,6 +475,20 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="71" selection-start-line="3" selection-start-column="71" selection-end-line="3" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="87">
+          <caret line="14" column="21" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/task_api.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="433">
+          <caret line="192" column="26" lean-forward="true" selection-start-line="192" selection-start-column="26" selection-end-line="192" selection-end-column="26" />
         </state>
       </provider>
     </entry>

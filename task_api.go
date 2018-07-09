@@ -190,6 +190,7 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	imageSlot.Src = attrs.MediaLink
 
+	log.Println(imageSlot)
 
 	if err := taskDao.AddPrevImage(imageSlot); err != nil {
 		respondWithError(w, http.StatusConflict, err.Error())
