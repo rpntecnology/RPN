@@ -31,6 +31,7 @@ func (m *UserDAO) Connect() {
 	log.Println(m.Database)
 	m.session,m.err = mgo.Dial(m.Server)
 	if m.err != nil {
+		log.Print("error in connceting to mongodb")
 		log.Fatal(m.err)
 	}
 	m.db = m.session.DB(m.Database)
