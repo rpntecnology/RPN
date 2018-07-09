@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"RPN/model"
 	"gopkg.in/mgo.v2/bson"
+	"crypto/tls"
+	"net"
 )
 
 type TaskDAO struct {
@@ -28,8 +30,24 @@ func (m *TaskDAO) Connect() {
 	m.Database = config.DB_NAME
 	log.Println(m.Server)
 	log.Println(m.Database)
-	m.session,m.err = mgo.Dial(m.Server)
+
+	dialInfo, err := mgo.ParseURL(m.Server)
+	if err != nil {
+		log.Print("error in parsing url")
+		log.Fatal(err)
+	}
+	tlsConfig := &tls.Config{}
+
+	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+		conn, err := tls.Dial("tcp", addr.String(), tlsConfig)
+		return conn, err
+	}
+
+	m.session, m.err = mgo.DialWithInfo(dialInfo)
+
+	//m.session,m.err = mgo.Dial(m.Server)
 	if m.err != nil {
+		log.Print("error in connceting to mongodb")
 		log.Fatal(m.err)
 	}
 	m.db = m.session.DB(m.Database)
