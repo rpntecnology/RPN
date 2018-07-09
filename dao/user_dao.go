@@ -41,6 +41,11 @@ func (m *UserDAO) Connect() {
 
 	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
 		conn, err := tls.Dial("tcp", addr.String(), tlsConfig)
+
+		if err != nil {
+			log.Print("Error in tls dial")
+			log.Print(err.Error())
+		}
 		return conn, err
 	}
 
@@ -52,6 +57,7 @@ func (m *UserDAO) Connect() {
 		log.Fatal(m.err)
 	}
 	m.db = m.session.DB(m.Database)
+	log.Print("successfully connect to db")
 }
 
 //Add User

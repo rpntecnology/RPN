@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5851b348-f468-42c1-9c98-c4ee981a549b" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/task_dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/task_dao.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dao/user_dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/user_dao.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -45,16 +45,13 @@
       <file leaf-file-name="user_dao.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dao/user_dao.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="461">
-              <caret line="53" column="35" lean-forward="true" selection-start-line="29" selection-start-column="4" selection-end-line="53" selection-end-column="35" />
-              <folding>
-                <element signature="e#13#107#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="135">
+              <caret line="9" column="4" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="16" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="task_dao.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="task_dao.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dao/task_dao.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-557">
@@ -87,7 +84,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="config.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="config.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config/config.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="105">
@@ -159,9 +156,9 @@
         <option value="$PROJECT_DIR$/app.yaml" />
         <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/user_api.go" />
+        <option value="$PROJECT_DIR$/dao/task_dao.go" />
         <option value="$PROJECT_DIR$/dao/user_dao.go" />
         <option value="$PROJECT_DIR$/config/config.go" />
-        <option value="$PROJECT_DIR$/dao/task_dao.go" />
       </list>
     </option>
   </component>
@@ -368,9 +365,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1335">
           <caret line="96" column="14" selection-start-line="96" selection-start-column="14" selection-end-line="96" selection-end-column="14" />
-          <folding>
-            <element signature="e#13#107#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -540,34 +534,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/config.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="241" selection-start-line="7" selection-start-column="241" selection-end-line="7" selection-end-column="241" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/user_api.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="121">
-          <caret line="25" column="58" selection-start-line="25" selection-start-column="58" selection-end-line="25" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/task_api.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1136">
           <caret line="192" column="26" selection-start-line="192" selection-start-column="26" selection-end-line="192" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dao/user_dao.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="461">
-          <caret line="53" column="35" lean-forward="true" selection-start-line="29" selection-start-column="4" selection-end-line="53" selection-end-column="35" />
-          <folding>
-            <element signature="e#13#107#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -578,6 +548,27 @@
           <folding>
             <element signature="e#13#107#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/user_api.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="121">
+          <caret line="25" column="58" selection-start-line="25" selection-start-column="58" selection-end-line="25" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dao/user_dao.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="4" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/config.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="241" selection-start-line="7" selection-start-column="241" selection-end-line="7" selection-end-column="241" />
         </state>
       </provider>
     </entry>
