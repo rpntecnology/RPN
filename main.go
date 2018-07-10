@@ -33,7 +33,8 @@ func main() {
 	r.Handle("/addTaskToUser", jwtMiddleware.Handler(http.HandlerFunc(AddTaskToUserHandler))).Methods("POST")
 	r.Handle("/changeTaskUser", jwtMiddleware.Handler(http.HandlerFunc(ChangeContractorHandler))).Methods("POST")
 	r.Handle("/findImg", http.HandlerFunc(FindImgURLHandler)).Methods("GET")
-	r.Handle("/findAll", http.HandlerFunc(GetAllUsersHandler)).Methods("GET")
+	r.Handle("/findAllTasks", jwtMiddleware.Handler(http.HandlerFunc(FindAllTasksHandler))).Methods("GET")
+	r.Handle("/findAllUsers", jwtMiddleware.Handler(http.HandlerFunc(GetAllUsersHandler))).Methods("GET")
 
 
 

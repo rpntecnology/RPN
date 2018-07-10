@@ -108,7 +108,13 @@ func (m *TaskDAO) FindById(taskId bson.ObjectId) (error, model.Task) {
 	return err, task
 }
 
-
+func (m *TaskDAO) FindAllTasks() ([]model.Task, error) {
+	m.Connect()
+	defer m.session.Close()
+	var tasks []model.Task
+	err := m.db.C(TASK_COLLECTION).Find(bson.M{}).All(&tasks)
+	return tasks, err
+}
 
 //new added functions
 func (m *TaskDAO) DeleteImageByImageID(taskID bson.ObjectId, imageID bson.ObjectId) error {

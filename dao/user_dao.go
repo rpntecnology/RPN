@@ -57,7 +57,6 @@ func (m *UserDAO) Connect() {
 		log.Fatal(m.err)
 	}
 	m.db = m.session.DB(m.Database)
-	log.Print("successfully connect to db")
 }
 
 //Add User
@@ -99,7 +98,7 @@ func (m *UserDAO) FindAll() ([]model.User, error) {
 	m.Connect()
 	defer m.session.Close()
 	var users []model.User
-	err := m.db.C(USER_COLLECTION).Find(bson.M{}).All(&users)
+	err := m.db.C(USER_COLLECTION).Find(bson.M{}).Select(bson.M{"_id":0, "password":0}).All(&users)
 	return users, err
 }
 

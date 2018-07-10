@@ -93,38 +93,53 @@ func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	tasks := getUsersTasks(taskIds)
 
 
-	log.Println(tasks)
-	var response []model.ResponseProfile
-	for _, task := range tasks {
-		var profile model.ResponseProfile
-		profile.TaskID = task.TaskID
-		profile.Username = task.Username
-		profile.Name = task.Name
-		profile.Invoice = task.Invoice
-		profile.BillTo = task.BillTo
-		profile.CompletionDate = task.CompletionDate
-		profile.InvoiceDate = task.InvoiceDate
-		profile.Address = task.Address
-		profile.City = task.City
-		profile.Year = task.Year
-		profile.Stories = task.Stories
-		profile.Area = task.Area
-		profile.TotalCost = task.TotalCost
-		profile.ItemList = task.ItemList
-		profile.TotalImage = task.TotalImage
-		profile.Stage = task.Stage
-		response = append(response, profile)
-	}
-	log.Println(response)
-	respondWithJson(w, http.StatusOK, response)
+	//log.Println(tasks)
+	//var response []model.ResponseProfile
+	//for _, task := range tasks {
+	//	var profile model.ResponseProfile
+	//	profile.TaskID = task.TaskID
+	//	profile.Username = task.Username
+	//	profile.Name = task.Name
+	//	profile.Invoice = task.Invoice
+	//	profile.BillTo = task.BillTo
+	//	profile.CompletionDate = task.CompletionDate
+	//	profile.InvoiceDate = task.InvoiceDate
+	//	profile.Address = task.Address
+	//	profile.City = task.City
+	//	profile.Year = task.Year
+	//	profile.Stories = task.Stories
+	//	profile.Area = task.Area
+	//	profile.TotalCost = task.TotalCost
+	//	profile.ItemList = task.ItemList
+	//	profile.TotalImage = task.TotalImage
+	//	profile.Stage = task.Stage
+	//	response = append(response, profile)
+	//}
+	//log.Println(response)
+	respondWithJson(w, http.StatusOK, tasks)
 }
 
 func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received get all users request")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	user := r.Context().Value("user")
+	claims := user.(*jwt.Token).Claims
+	authority := claims.(jwt.MapClaims)["authority"]
+	auth, _ := strconv.Atoi(authority.(string))
+
+	if auth < AUTH_TO_DELETE {
+		respondWithError(w, http.StatusUnauthorized, "You don not have the authority to view all users")
+		return
+	}
+
 	users, err := userDao.FindAll()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	log.Print(users)
 	respondWithJson(w, http.StatusOK, users)
 }
 
@@ -136,7 +151,7 @@ func RemoveUserHandler(w http.ResponseWriter, r *http.Request) {
 	claims := user.(*jwt.Token).Claims
 	authority := claims.(jwt.MapClaims)["authority"]
 	auth, _ := strconv.Atoi(authority.(string))
-	log.Println(auth)
+
 	if auth < AUTH_TO_DELETE {
 		respondWithError(w, http.StatusUnauthorized, "You don not have the authority to remove user")
 		return

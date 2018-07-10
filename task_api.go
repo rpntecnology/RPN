@@ -201,6 +201,26 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusCreated, imageSlot)
 }
 
+func FindAllTasksHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	log.Println("Received find all task request")
+	if CheckAuth(r) < AUTH_TO_DELETE {
+		log.Println("No authority to view all tasks")
+		respondWithError(w, http.StatusForbidden, "No authority to view all tasks")
+		return
+	}
+
+	tasks, err := taskDao.FindAllTasks()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, tasks)
+}
+
 
 func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received Find images urls request")
