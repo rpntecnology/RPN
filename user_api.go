@@ -65,8 +65,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		claims["authority"] = userDb.Authority
 		claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 		tokenString, _ := token.SignedString(config.MySigningKey)
-		w.Write([]byte(tokenString))
-		respondWithJson(w, http.StatusOK, userDb.Authority)
+		type Response struct {
+			Token 		[]byte
+			Authority 	string
+		}
+		var response Response
+		response.Token = []byte(tokenString)
+		response.Authority = userDb.Authority
+
+		//w.Write([]byte(tokenString))
+		respondWithJson(w, http.StatusOK, response)
 		log.Println("tokenString: " + tokenString)
 		log.Println("Login successfully")
 	} else {
