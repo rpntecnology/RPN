@@ -108,11 +108,26 @@ func (m *TaskDAO) FindById(taskId bson.ObjectId) (error, model.Task) {
 	return err, task
 }
 
+func (m *TaskDAO) FindByIdPreview(taskId bson.ObjectId) (error, model.Task) {
+	m.Connect()
+	defer m.session.Close()
+	var task model.Task
+	err := m.db.C(TASK_COLLECTION).Find(bson.M{"task_id": taskId}).
+		Select(bson.M{"task_id":1, "asset_num":1, "startDate":1,
+		"completionDate":1, "username":1, "name":1, "address":1,
+		"city":1}).One(&task)
+	return err, task
+}
+
 func (m *TaskDAO) FindAllTasks() ([]model.Task, error) {
 	m.Connect()
 	defer m.session.Close()
 	var tasks []model.Task
-	err := m.db.C(TASK_COLLECTION).Find(bson.M{}).All(&tasks)
+	//err := m.db.C(USER_COLLECTION).Find(bson.M{}).Select(bson.M{"_id":0, "password":0}).All(&users)
+	err := m.db.C(TASK_COLLECTION).Find(bson.M{}).
+		Select(bson.M{"task_id":1, "asset_num":1, "startDate":1,
+		"completionDate":1, "username":1, "name":1, "address":1,
+		"city":1}).All(&tasks)
 	return tasks, err
 }
 

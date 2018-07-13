@@ -118,6 +118,23 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusCreated, task)
 }
 
+func FindTaskByIdHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	log.Println("Received find one task request")
+
+	defer r.Body.Close()
+	taskId := bson.ObjectIdHex(r.URL.Query().Get("task_id"))
+	err, tasks := taskDao.FindById(taskId)
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, tasks)
+}
+
 func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -204,7 +221,6 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 func FindAllTasksHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	//w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 	log.Println("Received find all task request")
 	if CheckAuth(r) < AUTH_TO_DELETE {
@@ -214,7 +230,8 @@ func FindAllTasksHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tasks, err := taskDao.FindAllTasks()
-	if err != nil {
+
+ 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -269,8 +286,8 @@ func DeleteImageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received delete image request")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-	taskId, _ := r.URL.Query().Get("task_id"), 64
-	imageId, _ := r.URL.Query().Get("image_id"), 64
+	taskId := r.URL.Query().Get("task_id")
+	imageId := r.URL.Query().Get("image_id")
 	log.Println(taskId)
 	log.Println(imageId)
 

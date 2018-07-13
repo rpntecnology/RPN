@@ -101,29 +101,6 @@ func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	tasks := getUsersTasks(taskIds)
 
 
-	//log.Println(tasks)
-	//var response []model.ResponseProfile
-	//for _, task := range tasks {
-	//	var profile model.ResponseProfile
-	//	profile.TaskID = task.TaskID
-	//	profile.Username = task.Username
-	//	profile.Name = task.Name
-	//	profile.Invoice = task.Invoice
-	//	profile.BillTo = task.BillTo
-	//	profile.CompletionDate = task.CompletionDate
-	//	profile.InvoiceDate = task.InvoiceDate
-	//	profile.Address = task.Address
-	//	profile.City = task.City
-	//	profile.Year = task.Year
-	//	profile.Stories = task.Stories
-	//	profile.Area = task.Area
-	//	profile.TotalCost = task.TotalCost
-	//	profile.ItemList = task.ItemList
-	//	profile.TotalImage = task.TotalImage
-	//	profile.Stage = task.Stage
-	//	response = append(response, profile)
-	//}
-	//log.Println(response)
 	respondWithJson(w, http.StatusOK, tasks)
 }
 
@@ -212,7 +189,7 @@ func getUsersTasks(taskIds []bson.ObjectId) []model.Task{
 	var tasks []model.Task
 
 	for _, taskId := range taskIds {
-		err, task := taskDao.FindById(taskId)
+		err, task := taskDao.FindByIdPreview(taskId)
 		if err != nil {
 			log.Println(err.Error())
 		}
