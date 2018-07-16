@@ -33,7 +33,7 @@ func main() {
 	r.Handle("/deleteTask", jwtMiddleware.Handler(http.HandlerFunc(DeleteTaskHandler))).Methods("POST")
 	r.Handle("/addCategory", jwtMiddleware.Handler(http.HandlerFunc(AddCategoryHandler))).Methods("POST")
 	//r.Handle("/addItem", jwtMiddleware.Handler(http.HandlerFunc(AddItemHandler))).Methods("POST")
-	r.Handle("/changeTaskUser", jwtMiddleware.Handler(http.HandlerFunc(ChangeContractorHandler))).Methods("POST")
+	//r.Handle("/changeTaskUser", jwtMiddleware.Handler(http.HandlerFunc(ChangeContractorHandler))).Methods("POST")
 	r.Handle("/findAllTasks", jwtMiddleware.Handler(http.HandlerFunc(FindAllTasksHandler))).Methods("GET")
 	r.Handle("/findTaskById", jwtMiddleware.Handler(http.HandlerFunc(FindTaskByIdHandler))).Methods("GET")
 
