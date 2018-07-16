@@ -30,7 +30,7 @@
       <file leaf-file-name="user_dao.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dao/user_dao.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1348">
+            <state relative-caret-position="379">
               <caret line="123" column="34" selection-start-line="123" selection-start-column="18" selection-end-line="123" selection-end-column="34" />
             </state>
           </provider>
@@ -158,9 +158,9 @@
         <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/model/each.go" />
         <option value="$PROJECT_DIR$/task_api.go" />
-        <option value="$PROJECT_DIR$/dao/user_dao.go" />
         <option value="$PROJECT_DIR$/dao/task_dao.go" />
         <option value="$PROJECT_DIR$/user_api.go" />
+        <option value="$PROJECT_DIR$/dao/user_dao.go" />
       </list>
     </option>
   </component>
@@ -174,7 +174,7 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="22" />
+    <option name="y" value="202" />
     <option name="width" value="1440" />
     <option name="height" value="826" />
   </component>
@@ -241,9 +241,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1440" height="826" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50277776" side_tool="true" weight="0.37367022" />
       <window_info anchor="right" id="Database" order="3" />
@@ -251,7 +250,7 @@
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.49722221" visible="true" weight="0.37367022" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" sideWeight="0.49722221" visible="true" weight="0.37367022" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -588,7 +587,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dao/user_dao.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1348">
+        <state relative-caret-position="379">
           <caret line="123" column="34" selection-start-line="123" selection-start-column="18" selection-end-line="123" selection-end-column="34" />
         </state>
       </provider>

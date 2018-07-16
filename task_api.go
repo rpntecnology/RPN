@@ -325,29 +325,29 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("deleted task successfully")
 }
 
-func ChangeContractorHandler(w http.ResponseWriter, r *http.Request) {
-	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
-		respondWithError(w, http.StatusInternalServerError, "No authority to assign work")
-		log.Println("No authority to assign work")
-		return
-	}
-	log.Println("Received change task's contractor request")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-	taskId, _ := r.URL.Query().Get("task_id"), 64
-	log.Println(taskId)
-	user, _ := r.URL.Query().Get("username"), 64
-	log.Println(user)
-
-	if err := taskDao.AssignTaskToAnotherUser(bson.ObjectIdHex(taskId), user); err != nil {
-		log.Println("taskID: "+taskId +" user: " + user)
-		log.Println("DB find error")
-		log.Println(err.Error())
-		respondWithError(w, http.StatusConflict, err.Error())
-		return
-	}
-	log.Println("changed task's contractor successfully")
-}
+//func ChangeContractorHandler(w http.ResponseWriter, r *http.Request) {
+//	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
+//		respondWithError(w, http.StatusInternalServerError, "No authority to assign work")
+//		log.Println("No authority to assign work")
+//		return
+//	}
+//	log.Println("Received change task's contractor request")
+//	w.Header().Set("Access-Control-Allow-Origin", "*")
+//	w.Header().Set("Content-Type", "application/json")
+//	taskId, _ := r.URL.Query().Get("task_id"), 64
+//	log.Println(taskId)
+//	user, _ := r.URL.Query().Get("username"), 64
+//	log.Println(user)
+//
+//	if err := taskDao.AssignTaskToAnotherUser(bson.ObjectIdHex(taskId), user); err != nil {
+//		log.Println("taskID: "+taskId +" user: " + user)
+//		log.Println("DB find error")
+//		log.Println(err.Error())
+//		respondWithError(w, http.StatusConflict, err.Error())
+//		return
+//	}
+//	log.Println("changed task's contractor successfully")
+//}
 
 func AddCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	//if checkAuth(r) < AUTH_TO_MANAGE_TASK {
