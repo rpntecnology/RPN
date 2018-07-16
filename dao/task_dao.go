@@ -148,15 +148,13 @@ func (m *TaskDAO) DeleteImageByImageID(taskID bson.ObjectId, imageID bson.Object
 func (m *TaskDAO) DeleteTaskByTaskID(taskID bson.ObjectId) error {
 	m.Connect()
 	defer m.session.Close()
-	//db.collection.remove({_id: item._id})
 	err := m.db.C(TASK_COLLECTION).Remove(bson.M{"task_id" : taskID})
 	return err
 }
 
-func (m *TaskDAO) AssignTaskToAnotherUser(taskID bson.ObjectId, newUser string) error {
+func (m *TaskDAO) AssignUserToTask(taskID bson.ObjectId, newUser string) error {
 	m.Connect()
 	defer m.session.Close()
-	//var task model.Task
 	err := m.db.C(TASK_COLLECTION).Update(bson.M{"task_id": taskID}, bson.M{"$set": bson.M{"username" : newUser}})
 	return err
 }

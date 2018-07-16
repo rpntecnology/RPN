@@ -104,6 +104,7 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		task.AssetNumber = existTask.AssetNumber
 		task.StartDate = existTask.StartDate
+		task.CompletionDate = existTask.CompletionDate
 		task.Stage = existTask.Stage
 	}
 

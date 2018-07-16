@@ -121,11 +121,17 @@ func (m *UserDAO) DeleteUser(username string) error {
 	return err
 }
 
-func (m *UserDAO) AssignTask(username string, taskId bson.ObjectId) error {
+func (m *UserDAO) AssignTaskToUser(userToRemove, userToAdd string, taskId bson.ObjectId) error {
 	m.Connect()
 	defer m.session.Close()
+
+
+	m.db.C(USER_COLLECTION).Update(
+		bson.M{"username": userToRemove},
+		bson.M{"$pull": bson.M{"task_ids": taskId}})
+
 	err := m.db.C(USER_COLLECTION).Update(
-		bson.M{"username": username},
+		bson.M{"username": userToAdd},
 		bson.M{"$push": bson.M{"task_ids": taskId}})
 	return err
 }
