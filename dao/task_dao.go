@@ -69,12 +69,13 @@ func (m *TaskDAO) UpdateTask(task model.Task) error {
 	return err
 }
 
-func (m *TaskDAO) AddPrevImage(imageSlot model.ImageSlot) error {
+func (m *TaskDAO) AddImage(imageSlot model.ImageSlot) error {
 	m.Connect()
 	defer m.session.Close()
+	cmd := fmt.Sprintf("item_list.$.%s", imageSlot.Status)
 	err := m.db.C(TASK_COLLECTION).Update(
 		bson.M{"task_id": imageSlot.TaskID, "item_list": bson.M{"$elemMatch": bson.M{"cate": imageSlot.Cate, "item":imageSlot.ItemId}}},
-		bson.M{"$push": bson.M{"item_list.$.before":imageSlot}})
+		bson.M{"$push": bson.M{cmd:imageSlot}})
 
 	// update total images
 	m.db.C(TASK_COLLECTION).Update(
@@ -174,6 +175,7 @@ func (m *TaskDAO) AddItem(taskID bson.ObjectId, cate string, item model.Each) er
 		bson.M{"$push": bson.M{"list.$.each": item}})
 	return err
 }
+
 
 
 

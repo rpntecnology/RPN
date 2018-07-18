@@ -210,7 +210,7 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println(imageSlot)
 
-	if err := taskDao.AddPrevImage(imageSlot); err != nil {
+	if err := taskDao.AddImage(imageSlot); err != nil {
 		respondWithError(w, http.StatusConflict, err.Error())
 		log.Println("DB insert error, err: " + err.Error())
 		return
@@ -244,12 +244,15 @@ func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received Find images urls request")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-	taskId, _ := r.URL.Query().Get("task_id"), 64
-	cate, _ := r.URL.Query().Get("cate"), 64
+	taskId := r.URL.Query().Get("task_id")
+	cate := r.URL.Query().Get("cate")
 	itemId, _ := strconv.Atoi(r.URL.Query().Get("item_id"))
+	status := r.URL.Query().Get("status")
 
 	log.Println("task_id: " + taskId)
 	log.Println("cate: " + cate)
+	log.Println("status: " + status)
+
 	//log.Println("item_id: " + itemId)
 
 	err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
@@ -261,9 +264,27 @@ func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
 
 	var imgs []model.ImageSlot
 
+	//switch os := runtime.GOOS; os {
+	//case "darwin":
+	//	fmt.Println("OS X.")
+	//case "linux":
+	//	fmt.Println("Linux.")
+	//default:
+	//	// freebsd, openbsd,
+	//	// plan9, windows...
+	//	fmt.Printf("%s.", os)
+	//}
+
 	for _, item := range task.ItemList {
 		if item.Cate == cate && item.Item == itemId {
-			imgs = item.Before
+			switch status {
+			case "before":
+				imgs = item.Before
+			case "during":
+				imgs = item.During
+			case "after":
+				imgs = item.After
+			}
 		}
 	}
 
@@ -312,7 +333,7 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received delete task request")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-	taskId, _ := r.URL.Query().Get("task_id"), 64
+	taskId := r.URL.Query().Get("task_id")
 	log.Println(taskId)
 
 	if err := taskDao.DeleteTaskByTaskID(bson.ObjectIdHex(taskId)); err != nil {
