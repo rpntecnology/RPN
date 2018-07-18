@@ -253,8 +253,6 @@ func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("cate: " + cate)
 	log.Println("status: " + status)
 
-	//log.Println("item_id: " + itemId)
-
 	err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
 	if err != nil {
 		log.Println("Error in finding task")
@@ -263,18 +261,6 @@ func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var imgs []model.ImageSlot
-
-	//switch os := runtime.GOOS; os {
-	//case "darwin":
-	//	fmt.Println("OS X.")
-	//case "linux":
-	//	fmt.Println("Linux.")
-	//default:
-	//	// freebsd, openbsd,
-	//	// plan9, windows...
-	//	fmt.Printf("%s.", os)
-	//}
-
 	for _, item := range task.ItemList {
 		if item.Cate == cate && item.Item == itemId {
 			switch status {
@@ -298,6 +284,42 @@ func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, imgs)
 }
 
+func FindOneItemImgURLHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received Find images urls request")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	taskId := r.URL.Query().Get("task_id")
+	cate := r.URL.Query().Get("cate")
+	itemId, _ := strconv.Atoi(r.URL.Query().Get("item_id"))
+	log.Println("task_id: " + taskId)
+	log.Println("cate: " + cate)
+
+	err, task := taskDao.FindById(bson.ObjectIdHex(taskId))
+	if err != nil {
+		log.Println("Error in finding task")
+		respondWithError(w, http.StatusInternalServerError, "Error in finding task")
+		return
+	}
+
+	var imgs map[string][]model.ImageSlot
+	imgs = make(map[string][]model.ImageSlot)
+	for _, item := range task.ItemList {
+		if item.Cate == cate && item.Item == itemId {
+			imgs["before"] = item.Before
+			imgs["during"] = item.During
+			imgs["after"] = item.After
+		}
+	}
+
+	if len(imgs) == 0 {
+		log.Println("Error in finding images in such item: " + strconv.Itoa(itemId))
+		respondWithError(w, http.StatusInternalServerError, "Error in finding images in such item: " + strconv.Itoa(itemId))
+		return
+	}
+
+	log.Println(imgs)
+	respondWithJson(w, http.StatusOK, imgs)
+}
 
 func DeleteImageHandler(w http.ResponseWriter, r *http.Request) {
 	if CheckAuth(r) < 0 {
@@ -313,7 +335,6 @@ func DeleteImageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(taskId)
 	log.Println(imageId)
 
-	//var image []model.ImageSlot
 	if err := taskDao.DeleteImageByImageID(bson.ObjectIdHex(taskId), bson.ObjectIdHex(imageId)); err != nil {
 		log.Println("taskID: "+taskId + " imageID: " + imageId)
 		log.Println("DB find error")
