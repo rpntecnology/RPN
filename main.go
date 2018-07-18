@@ -27,6 +27,7 @@ func main() {
 
 	r.Handle("/addTask", jwtMiddleware.Handler(http.HandlerFunc(AddTaskHandler))).Methods("POST")
 	r.Handle("/initTask", jwtMiddleware.Handler(http.HandlerFunc(InitTaskHandler))).Methods("POST")
+	r.Handle("/parseJson", jwtMiddleware.Handler(http.HandlerFunc(ParseJsonHandler))).Methods("POST")
 	r.Handle("/updateTask", jwtMiddleware.Handler(http.HandlerFunc(UpdateTaskHandler))).Methods("POST")
 	r.Handle("/addImage", jwtMiddleware.Handler(http.HandlerFunc(AddImageHandler))).Methods("POST")
 	r.Handle("/deleteImageFromTask", jwtMiddleware.Handler(http.HandlerFunc(DeleteImageHandler))).Methods("POST")
@@ -37,8 +38,8 @@ func main() {
 	r.Handle("/findAllTasks", jwtMiddleware.Handler(http.HandlerFunc(FindAllTasksHandler))).Methods("GET")
 	r.Handle("/findTaskById", jwtMiddleware.Handler(http.HandlerFunc(FindTaskByIdHandler))).Methods("GET")
 
-	r.Handle("/findImg", http.HandlerFunc(FindImgURLHandler)).Methods("GET")
-	r.Handle("/findItemImg", http.HandlerFunc(FindOneItemImgURLHandler)).Methods("GET")
+	r.Handle("/findImg", jwtMiddleware.Handler(http.HandlerFunc(FindImgURLHandler))).Methods("GET")
+	r.Handle("/findItemImg", jwtMiddleware.Handler(http.HandlerFunc(FindOneItemImgURLHandler))).Methods("GET")
 
 	r.Handle("/findAllUsers", jwtMiddleware.Handler(http.HandlerFunc(GetAllUsersHandler))).Methods("GET")
 

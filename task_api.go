@@ -76,7 +76,7 @@ func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusCreated, task)
 }
 
-func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
+func ParseJsonHandler(w http.ResponseWriter, r *http.Request) {
 	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
 		log.Println("No authority to add task")
 		respondWithError(w, http.StatusForbidden, "No authority to add task")
@@ -108,6 +108,45 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		task.Stage = existTask.Stage
 	}
 
+	if err := taskDao.UpdateTask(task); err != nil {
+		log.Println("DB insert error")
+		log.Println(err.Error())
+		respondWithError(w, http.StatusConflict, err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	respondWithJson(w, http.StatusCreated, task)
+}
+
+func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
+	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
+		log.Println("No authority to update task")
+		respondWithError(w, http.StatusForbidden, "No authority to update task")
+		return
+	}
+
+	log.Println("Received new update task request")
+	defer r.Body.Close()
+	var task model.Task
+	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	//function _update($id, $data, $options=array()){
+	//	$temp = array();
+	//	foreach($data as $key => $value) {
+	//		$temp["some_key.".$key] = $value;
+	//		}
+	//		$collection->update( array('_id' => $id), array('$set' => $temp) );
+	//		}
+	//
+	//		_update('1', array('param2' => 'some data'));
+
+	taskId := bson.ObjectIdHex(r.URL.Query().Get("task_id"))
+	task.TaskID = taskId
+	//og.Print(task.TaskID)
 	if err := taskDao.UpdateTask(task); err != nil {
 		log.Println("DB insert error")
 		log.Println(err.Error())
@@ -241,9 +280,11 @@ func FindAllTasksHandler(w http.ResponseWriter, r *http.Request) {
 
 
 func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Received Find images urls request")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	log.Println("Received Find images urls request")
+
 	taskId := r.URL.Query().Get("task_id")
 	cate := r.URL.Query().Get("cate")
 	itemId, _ := strconv.Atoi(r.URL.Query().Get("item_id"))
@@ -285,9 +326,11 @@ func FindImgURLHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func FindOneItemImgURLHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Received Find images urls request")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	log.Println("Received Find images urls of one item request")
+
 	taskId := r.URL.Query().Get("task_id")
 	cate := r.URL.Query().Get("cate")
 	itemId, _ := strconv.Atoi(r.URL.Query().Get("item_id"))
