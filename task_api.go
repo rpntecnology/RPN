@@ -258,6 +258,51 @@ func AddImageHandler(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusCreated, imageSlot)
 }
 
+func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	log.Println("Received new upload image request")
+
+	defer r.Body.Close()
+	var imageSlot model.ImageSlot
+
+	// 32 << 20 is the maxMemory param for ParseMultipartForm, equals to 32MB (1MB = 1024 * 1024 bytes = 2^20 bytes)
+	// After you call ParseMultipartForm, the file will be saved in the server memory with maxMemory size.
+	// If the file size is larger than maxMemory, the rest of the data will be saved in a system temporary file.
+	r.ParseMultipartForm(32 << 20)
+	imageSlot.ImageID = bson.NewObjectId()
+
+	file, _, err := r.FormFile("image")
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Image is not available")
+		log.Println("Image is not available, err: " + err.Error())
+		return
+	}
+	defer file.Close()
+
+	img, header, _ := r.FormFile("image")
+	defer img.Close()
+	suffix := filepath.Ext(header.Filename)
+
+	if _, ok := config.MediaTypes[suffix]; ok {
+		imageSlot.Format = suffix
+	} else {
+		imageSlot.Format = "unknown"
+	}
+
+	ctx := context.Background()
+	_, attrs, err := saveToGCS(ctx, file, config.BUCKET_NAME, imageSlot.ImageID.String())
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError,"GCS is not setup")
+		log.Println("GCS is not setup, err: " + err.Error())
+		return
+	}
+
+	imageSlot.Src = attrs.MediaLink
+	log.Println(imageSlot)
+	respondWithJson(w, http.StatusCreated, imageSlot.Src)
+}
+
 func FindAllTasksHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")

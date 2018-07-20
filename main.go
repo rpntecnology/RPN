@@ -30,6 +30,7 @@ func main() {
 	r.Handle("/parseJson", jwtMiddleware.Handler(http.HandlerFunc(ParseJsonHandler))).Methods("POST")
 	r.Handle("/updateTask", jwtMiddleware.Handler(http.HandlerFunc(UpdateTaskHandler))).Methods("POST")
 	r.Handle("/addImage", jwtMiddleware.Handler(http.HandlerFunc(AddImageHandler))).Methods("POST")
+	r.Handle("/uploadImage", http.HandlerFunc(UploadImageHandler)).Methods("POST")
 	r.Handle("/deleteImageFromTask", jwtMiddleware.Handler(http.HandlerFunc(DeleteImageHandler))).Methods("POST")
 	r.Handle("/deleteTask", jwtMiddleware.Handler(http.HandlerFunc(DeleteTaskHandler))).Methods("POST")
 	r.Handle("/addCategory", jwtMiddleware.Handler(http.HandlerFunc(AddCategoryHandler))).Methods("POST")
