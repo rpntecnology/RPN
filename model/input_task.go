@@ -15,7 +15,7 @@ type InputTask struct {
 	Area            string        `bson:"area" 			    json:"area"`
 	TotalCost       string        `bson:"totolCost" 	    json:"totalCost"`
 	Bdate			string        `bson:"bdate" 			json:"bdate"`
-	List        	[]List        `bson:"list" 		        json:"list"`
+	List        	[]InList      `bson:"list" 		        json:"list"`
 	TotalImage      int           `bson:"totalImage" 		json:"totalImage"`
 	Stage           string        `bson:"stage" 			json:"stage"`
 }

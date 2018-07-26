@@ -633,7 +633,7 @@ func TransformTask(inTask model.InputTask) model.Task {
 	task.BillTo = inTask.BillTo
 	task.CompletionDate = inTask.CompletionDate
 	task.InvoiceDate = inTask.InvoiceDate
-	task.Username[0] = inTask.Username
+	task.Username = append(task.Username, inTask.Username)
 	task.Name = inTask.Name
 	task.Address = inTask.Address
 	task.City = inTask.City
@@ -642,14 +642,26 @@ func TransformTask(inTask model.InputTask) model.Task {
 	task.Area = inTask.Area
 	task.TotalCost = inTask.TotalCost
 	task.TotalImage = inTask.TotalImage
-	task.Stage = inTask.Stage
+	task.Stage = "1"
+	task.ErrorStage = ""
+	task.ErrorReason = ""
 
 	var itemList []model.Each
+
 	cateList := inTask.List
 	for _, cate := range cateList {
 		for _, item := range cate.Each {
-			item.Cate = cate.Cate
-			itemList = append(itemList, item)
+			var myItem model.Each
+			myItem.Cate = cate.Cate
+			for _, img := range item.Image {
+				var bImg model.ImageSlot
+				bImg.ImageID = bson.NewObjectId()
+				bImg.TaskID = bson.ObjectIdHex(inTask.TaskID)
+				bImg.Src = img.Src
+				bImg.Name = img.Name
+				myItem.Before = append(myItem.Before, bImg)
+			}
+			itemList = append(itemList, myItem)
 		}
 	}
 	task.ItemList = itemList
