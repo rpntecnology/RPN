@@ -106,7 +106,7 @@ func ParseJsonHandler(w http.ResponseWriter, r *http.Request) {
 		task.AssetNumber = existTask.AssetNumber
 		task.StartDate = existTask.StartDate
 		task.CompletionDate = existTask.CompletionDate
-		task.Stage = existTask.Stage
+		//task.Stage = existTask.Stage
 	}
 
 	if err := taskDao.UpdateTask(task); err != nil {
@@ -633,7 +633,7 @@ func TransformTask(inTask model.InputTask) model.Task {
 	task.BillTo = inTask.BillTo
 	task.CompletionDate = inTask.CompletionDate
 	task.InvoiceDate = inTask.InvoiceDate
-	task.Username = append(task.Username, inTask.Username)
+	task.Username = inTask.Username
 	task.Name = inTask.Name
 	task.Address = inTask.Address
 	task.City = inTask.City

@@ -6,7 +6,7 @@ type InputTask struct {
 	BillTo			string		  `bson:"billTo" 			json:"billTo"`
 	CompletionDate  string	  	  `bson:"completionDate" 	json:"completionDate"`
 	InvoiceDate		string        `bson:"invoiceDate" 	    json:"invoiceDate"`
-	Username        string        `bson:"username" 			json:"username"`
+	Username        []string        `bson:"username" 			json:"username"`
 	Name			string        `bson:"name" 				json:"name"`
 	Address         string        `bson:"address" 			json:"address"`
 	City			string        `bson:"city" 			    json:"city"`
