@@ -42,6 +42,9 @@ func main() {
 	r.Handle("/findImg", jwtMiddleware.Handler(http.HandlerFunc(FindImgURLHandler))).Methods("GET")
 	r.Handle("/findItemImg", jwtMiddleware.Handler(http.HandlerFunc(FindOneItemImgURLHandler))).Methods("GET")
 
+	r.Handle("/finishTask", jwtMiddleware.Handler(http.HandlerFunc(FinishTaskHandler))).Methods("POST")
+	r.Handle("/terminateTask", jwtMiddleware.Handler(http.HandlerFunc(TerminateTaskHandler))).Methods("POST")
+
 	r.Handle("/findAllUsers", jwtMiddleware.Handler(http.HandlerFunc(GetAllUsersHandler))).Methods("GET")
 
 

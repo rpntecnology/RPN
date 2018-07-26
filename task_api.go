@@ -35,6 +35,7 @@ func InitTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task.TaskID = bson.NewObjectId()
+	task.Stage = "0"
 	//
 	if err := taskDao.AddTask(task); err != nil {
 		log.Println("DB insert error")
@@ -455,6 +456,59 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("deleted task successfully")
 }
 
+func FinishTaskHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	log.Println("Received finish a task request")
+
+	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
+		respondWithError(w, http.StatusInternalServerError, "No authority to finish a task")
+		log.Println("No authority to finish a task")
+		return
+	}
+
+	taskId := r.URL.Query().Get("task_id")
+	err := taskDao.FinishTask(bson.ObjectIdHex(taskId))
+
+	if err != nil {
+		log.Println("taskID: " + taskId + " DB find error")
+		log.Println(err.Error())
+		respondWithError(w, http.StatusConflict, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, "success")
+}
+
+func TerminateTaskHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	log.Println("Received terminate a task request")
+
+	if CheckAuth(r) < AUTH_TO_DELETE {
+		respondWithError(w, http.StatusInternalServerError, "No authority to terminate a task")
+		log.Println("No authority to terminate a task")
+		return
+	}
+
+	taskId := r.FormValue("task_id")
+	errorStage := r.FormValue("error_stage")
+	reason := r.FormValue("reason")
+
+	err := taskDao.TerminateTask(bson.ObjectIdHex(taskId), errorStage, reason)
+	if err != nil {
+		log.Print("taskId: " + taskId)
+		log.Print("error stage: " + errorStage)
+		log.Print("reason: " + reason)
+		log.Println(err.Error())
+		respondWithError(w, http.StatusConflict, err.Error())
+		return
+	}
+
+	respondWithJson(w, http.StatusOK, "success")
+}
+
 //func ChangeContractorHandler(w http.ResponseWriter, r *http.Request) {
 //	if CheckAuth(r) < AUTH_TO_MANAGE_TASK {
 //		respondWithError(w, http.StatusInternalServerError, "No authority to assign work")
@@ -579,7 +633,7 @@ func TransformTask(inTask model.InputTask) model.Task {
 	task.BillTo = inTask.BillTo
 	task.CompletionDate = inTask.CompletionDate
 	task.InvoiceDate = inTask.InvoiceDate
-	task.Username = inTask.Username
+	task.Username[0] = inTask.Username
 	task.Name = inTask.Name
 	task.Address = inTask.Address
 	task.City = inTask.City

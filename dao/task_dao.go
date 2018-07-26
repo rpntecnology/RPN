@@ -153,10 +153,11 @@ func (m *TaskDAO) DeleteTaskByTaskID(taskID bson.ObjectId) error {
 	return err
 }
 
-func (m *TaskDAO) AssignUserToTask(taskID bson.ObjectId, newUser string) error {
+func (m *TaskDAO) AssignUserToTask(taskID bson.ObjectId, newUser, stageNum string) error {
 	m.Connect()
 	defer m.session.Close()
-	err := m.db.C(TASK_COLLECTION).Update(bson.M{"task_id": taskID}, bson.M{"$set": bson.M{"username" : newUser}})
+	posToAdd := "username." + stageNum
+	err := m.db.C(TASK_COLLECTION).Update(bson.M{"task_id": taskID}, bson.M{"$set": bson.M{posToAdd : newUser}})
 	return err
 }
 
@@ -173,6 +174,24 @@ func (m *TaskDAO) AddItem(taskID bson.ObjectId, cate string, item model.Each) er
 	err := m.db.C(TASK_COLLECTION).Update(
 		bson.M{"task_id": taskID, "list.cate": cate},
 		bson.M{"$push": bson.M{"list.$.each": item}})
+	return err
+}
+
+func (m *TaskDAO) FinishTask(taskID bson.ObjectId) error {
+	m.Connect()
+	defer m.session.Close()
+	err := m.db.C(TASK_COLLECTION).Update(
+		bson.M{"task_id": taskID},
+		bson.M{"$set": bson.M{"stage": "4"}})
+	return err
+}
+
+func (m *TaskDAO) TerminateTask(taskID bson.ObjectId, currStage, reason string) error {
+	m.Connect()
+	defer m.session.Close()
+	err := m.db.C(TASK_COLLECTION).Update(
+		bson.M{"task_id": taskID},
+		bson.M{"$set": bson.M{"error_stage": currStage, "reason": reason}})
 	return err
 }
 

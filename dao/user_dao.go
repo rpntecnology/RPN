@@ -126,12 +126,23 @@ func (m *UserDAO) AssignTaskToUser(userToRemove, userToAdd string, taskId bson.O
 	defer m.session.Close()
 
 
-	m.db.C(USER_COLLECTION).Update(
+	err1 := m.db.C(USER_COLLECTION).Update(
 		bson.M{"username": userToRemove},
 		bson.M{"$pull": bson.M{"task_ids": taskId}})
+
+	if err1 != nil {
+		return err1
+	}
 
 	err := m.db.C(USER_COLLECTION).Update(
 		bson.M{"username": userToAdd},
 		bson.M{"$push": bson.M{"task_ids": taskId}})
+
+	// if userToAdd is not found, add the task_id back
+	if err != nil {
+		m.db.C(USER_COLLECTION).Update(
+			bson.M{"username": userToRemove},
+			bson.M{"$push": bson.M{"task_ids": taskId}})
+	}
 	return err
 }

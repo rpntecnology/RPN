@@ -10,7 +10,7 @@ type Task struct {
 	StartDate       string        `bson:"startDate" 		json:"startDate"`
 	CompletionDate  string	  	  `bson:"completionDate" 	json:"completionDate"`
 	InvoiceDate		string        `bson:"invoiceDate" 	    json:"invoiceDate"`
-	Username        string        `bson:"username" 			json:"username"`
+	Username        []string      `bson:"username" 			json:"username"`
 	Name			string        `bson:"name" 				json:"name"`
 	Address         string        `bson:"address" 			json:"address"`
 	City			string        `bson:"city" 			    json:"city"`
@@ -21,4 +21,6 @@ type Task struct {
 	ItemList		[]Each        `bson:"item_list" 		json:"item_list"`
 	TotalImage      int           `bson:"totalImage" 		json:"totalImage"`
 	Stage           string        `bson:"stage" 			json:"stage"`
+	ErrorStage		string		  `bson:"error_stage"       json:"error_stage"`
+	ErrorReason		string		  `bson:"error_reason"      json:"error_reason"`
 }

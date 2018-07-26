@@ -166,21 +166,32 @@ func AddTaskToUserHandler(w http.ResponseWriter, r *http.Request) {
 	userToRemove := r.FormValue("userToRemove")
 	userToAdd := r.FormValue("userToAdd")
 	taskId := r.FormValue("task_id")
+	stage := r.FormValue("stage")
+
 	log.Println("debug")
 	log.Println(userToRemove)
 	log.Println(userToRemove)
 	log.Println(taskId)
+	log.Print(stage)
+
+	if _, err := strconv.Atoi(stage); err != nil {
+		log.Print("stage is not a number")
+		respondWithError(w, http.StatusForbidden, "stage is not a number")
+		return
+	}
+
 	if userToRemove == "" {
 		userToRemove = userToAdd
 	}
 	err1 := userDao.AssignTaskToUser(userToRemove, userToAdd, bson.ObjectIdHex(taskId))
+
 	if err1 != nil {
 		log.Println("Error in assigning tasks, err: " + err1.Error())
 		respondWithError(w, http.StatusForbidden, "Error in assigning task to user")
 		return
 	}
 
-	err2 := taskDao.AssignUserToTask(bson.ObjectIdHex(taskId), userToAdd)
+	err2 := taskDao.AssignUserToTask(bson.ObjectIdHex(taskId), userToAdd, stage)
 	if err2 != nil {
 		log.Println("Error in assigning users, err: " + err2.Error())
 		respondWithError(w, http.StatusForbidden, "Error in assigning user to task")
@@ -188,6 +199,8 @@ func AddTaskToUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJson(w, http.StatusOK, "done")
 }
+
+
 
 func getUsersTaskIds(username string) []bson.ObjectId {
 	err, user := userDao.FindUser(username)
