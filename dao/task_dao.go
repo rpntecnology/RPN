@@ -128,7 +128,7 @@ func (m *TaskDAO) FindAllTasks() ([]model.Task, error) {
 	err := m.db.C(TASK_COLLECTION).Find(bson.M{}).
 		Select(bson.M{"task_id":1, "asset_num":1, "startDate":1,
 		"completionDate":1, "username":1, "name":1, "address":1,
-		"city":1}).All(&tasks)
+		"city":1, "stage":1}).All(&tasks)
 	return tasks, err
 }
 
