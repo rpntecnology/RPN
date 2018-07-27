@@ -13,7 +13,7 @@ const (
 	// database name
 	DB_NAME =  "RPN_proj"
 
-	BUCKET_NAME = "post-images-rpnserver"
+	BUCKET_NAME = "post-images-rpntech"
 
 )
 

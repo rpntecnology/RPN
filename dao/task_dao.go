@@ -157,7 +157,8 @@ func (m *TaskDAO) AssignUserToTask(taskID bson.ObjectId, newUser, stageNum strin
 	m.Connect()
 	defer m.session.Close()
 	posToAdd := "username." + stageNum
-	err := m.db.C(TASK_COLLECTION).Update(bson.M{"task_id": taskID}, bson.M{"$set": bson.M{posToAdd : newUser}})
+	err := m.db.C(TASK_COLLECTION).Update(bson.M{"task_id": taskID}, bson.M{"$set": bson.M{posToAdd : newUser, "stage": stageNum}})
+
 	return err
 }
 
