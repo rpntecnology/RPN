@@ -116,7 +116,7 @@ func (m *TaskDAO) FindByIdPreview(taskId bson.ObjectId) (error, model.Task) {
 	err := m.db.C(TASK_COLLECTION).Find(bson.M{"task_id": taskId}).
 		Select(bson.M{"task_id":1, "asset_num":1, "startDate":1,
 		"completionDate":1, "username":1, "name":1, "address":1,
-		"city":1}).One(&task)
+		"city":1, "stage":1}).One(&task)
 	return err, task
 }
 
